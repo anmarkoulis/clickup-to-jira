@@ -1,0 +1,4 @@
+jira
+requests
+pyclickup
+python-dotenv

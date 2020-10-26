@@ -1,0 +1,7 @@
+wheel
+mock
+coverage
+nose
+freezegun
+pre-commit
+pylint

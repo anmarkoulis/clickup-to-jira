@@ -1,0 +1,60 @@
+default_stages:
+  - commit
+exclude: docs|.git|.tox
+fail_fast: true
+repos:
+  - hooks:
+      - id: detect-secrets
+        args: [ '--baseline', '.secrets.baseline' ]
+        exclude: (docs|README.md)
+    repo: https://github.com/Yelp/detect-secrets.git
+    rev: v0.14.2
+
+  - hooks:
+      - id: check-merge-conflict
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-json
+        files: \.(json)$
+      - id: check-toml
+        files: \.(toml)$
+      - id: check-yaml
+        files: \.(yaml)$
+      - id: fix-encoding-pragma
+        args: [ --remove ]
+    repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v3.2.0
+
+  - hooks:
+      - id: seed-isort-config
+    repo: https://github.com/asottile/seed-isort-config
+    rev: v1.9.3
+
+  - hooks:
+      - id: isort
+    repo: https://github.com/pre-commit/mirrors-isort
+    rev: v5.4.2
+
+  - hooks:
+      - id: black
+        language_version: python3.8
+        require_serial: true
+        types:
+          - python
+    repo: https://github.com/ambv/black
+    rev: stable
+
+  - hooks:
+      - args:
+          - --config=setup.cfg
+        id: flake8
+    repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.3
+
+  - hooks:
+      - entry: pylint --rcfile=.pylintrc
+        files: \.py$
+        id: system
+        language: system
+        name: PyLint
+    repo: local

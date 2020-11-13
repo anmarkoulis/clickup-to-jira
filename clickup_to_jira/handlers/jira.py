@@ -26,7 +26,7 @@ class JIRAHandler(JIRA):
             "project": project,
             "issuetype": {"name": ticket.type}
             if not ticket.parent
-            else {"name": "Sub-task"},
+            else {"name": "Subtask"},
             "summary": ticket.title,
             "description": ticket.description,
         }
@@ -73,7 +73,11 @@ class JIRAHandler(JIRA):
             f'project = "{project}" and summary '
             f'~ "{summary}" ORDER BY created DESC'
         )
-        return self.search_issues(jql)
+        issues = self.search_issues(jql)
+        proper_issues = [
+            issue for issue in issues if issue.fields.summary == summary
+        ]
+        return proper_issues
 
     def search_users(
         self,

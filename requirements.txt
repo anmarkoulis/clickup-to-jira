@@ -2,3 +2,4 @@ jira
 requests
 pyclickup
 python-dotenv
+mistletoe

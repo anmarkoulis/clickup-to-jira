@@ -39,7 +39,11 @@ setuptools.setup(
         "Programming Language :: Python :: 3.8",
         "Operating System :: OS Independent",
     ],
-    scripts=["clickup_to_jira/migrate.py"],
+    entry_points={
+        "console_scripts": [
+            "migrate = clickup_to_jira." "scripts.migrate:main"
+        ],
+    },
     python_requires=">=3.8",
     zip_safe=True,
     install_requires=get_requirements_from_file("requirements.txt"),

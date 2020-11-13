@@ -13,3 +13,7 @@ class Ticket:
     title: str
     description: str
     subtasks: list
+    status: str
+    assignee: str
+    parent: str
+    comments: list

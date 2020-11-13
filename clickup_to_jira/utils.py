@@ -17,6 +17,9 @@ def initialize_logging():
         ),
     )
     logging.getLogger(__name__).setLevel(os.getenv("LOGGING_LEVEL", "INFO"))
+    logging.getLogger("clickup_to_jira").setLevel(
+        os.getenv("LOGGING_LEVEL", "INFO")
+    )
     logging.getLogger(__name__).propagate = True
 
 
@@ -40,13 +43,13 @@ def get_cli_arguments():
         "-PROJECT",
         type=str,
         help="Project to look for tickets on",
-        required=False,
+        required=True,
     )
     parser.add_argument(
         "-LIST",
         type=str,
         help="Lists to look for tickets on",
-        required=True,
+        required=False,
     )
     parser.add_argument(
         "-JIRA_PROJECT",

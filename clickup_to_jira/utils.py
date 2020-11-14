@@ -6,8 +6,6 @@ from argparse import ArgumentParser
 def initialize_logging():
     """
     Initialize logging configuration.
-
-    :param dict config_dict: The configuration dictionary
     """
     logging.basicConfig(
         level="ERROR",

@@ -4,7 +4,7 @@ from dataclasses import dataclass
 @dataclass
 class Ticket:
     """
-    Class responsible for hosting tickets of all JIRA and Clickup
+    Class responsible for hosting tickets of all JIRA and ClickUp
     """
 
     id: str

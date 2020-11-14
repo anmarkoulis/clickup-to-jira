@@ -21,7 +21,7 @@ class ClickUpToJIRAConverter:
         """
         Convert ClickUp tickets to JIRA tickets.
 
-        :param Ticket tickets: The tickets to be converted
+        :param list(Ticket) tickets: The tickets to be converted
         :return: The converted tickets
         :rtype: list(Ticket)
         """
@@ -31,15 +31,27 @@ class ClickUpToJIRAConverter:
         return converted_tickets
 
     def convert_ticket(self, ticket):
+        """
+        Covert ClickUp ticket to DataClass Ticket.
+
+        :param ClickUp.Ticket ticket: The incoming Ticker
+        :return: The dataclass Ticket
+        :rtype: Ticket
+        """
         logger.info(f"converting ticket {ticket.name}")
+        # Prepare entities for ticket
         ticket_type = ",".join([tag.name for tag in ticket.tags])
         ticket_description = self.get_converted_description(ticket.description)
         ticket_status = ticket.status.status
         subtasks = self.get_converted_subtasks(ticket.linked_tasks)
+
+        # Handle assignees
         if ticket.assignees:
             ticket_assignee = ticket.assignees[0]
         else:
             ticket_assignee = None
+
+        # Return the new Ticket
         return Ticket(
             id=ticket.id,
             type=ticket_type,
@@ -53,8 +65,24 @@ class ClickUpToJIRAConverter:
             parent=ticket.parent,
         )
 
-    def get_converted_description(self, description):
+    @staticmethod
+    def get_converted_description(description):
+        """
+        Get the converted description.
+
+        :param str description: The incoming description
+        :return: The edited description
+        :rtype: str
+        """
+        # todo Transform ClickUp Markdown to JIRA Markdown
         return description
 
     def get_converted_subtasks(self, subtasks):
+        """
+        Get Converted subtasks.
+
+        :param list(ClickUp.Ticket) subtasks: The ClickUp sub tickets
+        :return: The edited sub tickets
+        :rtype: list(Ticket)
+        """
         return [self.convert_ticket(subtask) for subtask in subtasks]

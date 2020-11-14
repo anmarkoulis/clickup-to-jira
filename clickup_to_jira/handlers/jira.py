@@ -7,83 +7,16 @@ from jira.resources import User
 
 logger = getLogger(__name__)
 
+DEFAULT_ISSUE_TYPE = "Story"
+
 
 class JIRAHandler(JIRA):
+    """
+    Class responsible for adding Ticket to JIRA.
+    """
+
     status_mappings = {}
     type_mappings = {}
-
-    def create_type_mappings(self, tickets):
-        """
-        Create mappings between clickup labels and Jira Ticket types.
-
-        :param list(Ticket) tickets: The tickets to create
-        """
-        clickup_labels = list(
-            set(
-                [
-                    ticket_type
-                    for ticket in tickets
-                    for ticket_type in ticket.type.split(",")
-                ]
-            )
-        )
-        jira_statuses = list(
-            set([issue_type.name for issue_type in self.issue_types()])
-        )
-        try:
-            default_jira_type = list(
-                filter(lambda x: "Story" == x, jira_statuses)
-            )[0]
-        except KeyError:
-            default_jira_type = jira_statuses[0]
-        default_mapping = {
-            clickup_label: default_jira_type
-            for clickup_label in clickup_labels
-        }
-        logger.info(f"Default Mapping : {default_mapping}")
-        selection = input(
-            f"Default mapping is : {default_mapping}"
-            f"\nPress Y if you want to use this mapping "
-            f"or N if you want to assign a mapping of your own."
-        )
-
-        if selection not in ["N", "Y"]:
-            while True:
-                selection = input(
-                    f"{selection} is not a valid choice. Please write Y on N."
-                )
-                if selection == "N":
-                    return self.__compute_type_mappings(
-                        clickup_labels, jira_statuses
-                    )
-                elif selection == "Y":
-                    return default_mapping
-
-        elif selection == "Y":
-            return default_mapping
-        else:
-            return self.__compute_type_mappings(clickup_labels, jira_statuses)
-
-    def __compute_type_mappings(self, clickup_labels, jira_statuses):
-        mappings = {}
-        for clickup_label in clickup_labels:
-            printable_label = clickup_label if clickup_label else "''"
-            jira_status = input(
-                f"Please provide a mapping for {printable_label} : "
-                f"\nEligible options are {jira_statuses}"
-            )
-            if jira_status not in jira_statuses:
-                while True:
-                    jira_status = input(
-                        f"{jira_status} is not a valid choice. "
-                        f"Please provide on of {jira_statuses}."
-                    )
-                    if jira_status in jira_statuses:
-                        mappings[clickup_label] = jira_status
-                        break
-            else:
-                mappings[clickup_label] = jira_status
-        return mappings
 
     def create_tickets(self, tickets, project):
         """
@@ -94,12 +27,14 @@ class JIRAHandler(JIRA):
         :return: The list of created JIRA issues
         :rtype: list(jira.issue)
         """
+        # Create type mappings from tickets
         cur_project = list(
             filter(lambda x: project in x.name, self.projects())
         )[0]
         self.type_mappings = self.create_type_mappings(tickets)
         logger.info(self.type_mappings)
 
+        # Create all tickets
         issues = list()
         for ticket in tickets:
             issues.append(self.create_ticket(ticket, cur_project.id))
@@ -115,58 +50,249 @@ class JIRAHandler(JIRA):
         :rtype: JIRA.issue
         """
         logger.info(f"Creating {ticket.title} in JIRA.")
+        # Check issue already exists
         if self.get_issue_from_summary(project, ticket.title):
             logger.warning(f"Ticket {ticket.title} already exists.")
             return
-        issue_data = {
-            "project": project,
-            "issuetype": {
-                "name": self.type_mappings[ticket.type.split(",")[0]]
-            }
-            if not ticket.parent
-            else {"name": "Subtask"},
-            "summary": ticket.title,
-            "description": ticket.description,
-        }
-        parent_list = self.get_issue_from_summary(project, ticket.parent)
-        if parent_list:
-            logger.info(f"Ticket {ticket.title} has parent")
-            issue_data["parent"] = {"id": parent_list[0].id}
 
+        # Create issue in JIRA
+        issue = self.create_jira_issue(ticket, project)
+        if not issue:
+            logger.exception(f"Cannot create issue from {ticket}.")
+            return
+
+        # Assign issue in proper user
+        self.assign_issue_to_user(issue, ticket)
+
+        # Transition issue to proper status
+        self.transition_issue_to_proper_status(issue, ticket)
+
+        # Add comments in ticket
+        self.add_comments(issue, ticket)
+
+    def create_jira_issue(self, ticket, project):
+        """
+        Create a JIRA issue given the ticket and the JIRA project.
+
+        :param Ticket ticket: The ticket to create to JIRA
+        :param str project: The project name to add the ticket to
+        :return: The JIRA Issue
+        :rtype: Jira.issue
+        """
         try:
-            issue = self.create_issue(**issue_data)
+            # Populate basic data for ticket creation
+            issue_data = {
+                "project": project,
+                "issuetype": {
+                    "name": self.type_mappings[ticket.type.split(",")[0]]
+                }
+                if not ticket.parent
+                else {"name": "Subtask"},
+                "summary": ticket.title,
+                "description": ticket.description,
+            }
+
+            # Handle case where issue is subtasks
+            parent_list = self.get_issue_from_summary(project, ticket.parent)
+            if parent_list:
+                logger.info(f"Ticket {ticket.title} has parent")
+                issue_data["parent"] = {"id": parent_list[0].id}
+
+            # Create the ticket
+            return self.create_issue(**issue_data)
         except JIRAError:
             logger.exception("Cannot create issue. Move on")
-            return
-        logger.info(f"Create {issue}")
+            return None
+
+    def assign_issue_to_user(self, issue, ticket):
+        """
+        Assign JIRA issue to a user.
+
+        :param JIRA.issue issue: The JIRA issue
+        :param Ticket ticket: The Ticket to retrieve the assignee from
+        """
         try:
             user = self.search_users(user=ticket.assignee)[0].accountId
             self.assign_issue(issue, user)
             logger.info(f"Assigned {issue}")
         except (JIRAError, IndexError):
             logger.warning(f"Cannot assign {issue}")
+
+    def transition_issue_to_proper_status(self, issue, ticket):
+        """
+        Transition JIRA issue to the desired status.
+
+        :param JIRA.issue issue: The JIRA issue
+        :param Ticket ticket: The Ticket to retrieve the assignee from
+        """
+        if ticket.status not in self.status_mappings.keys():
+            try:
+                self.update_status_mappings(ticket, issue)
+            except JIRAError:
+                logger.warning("Cannot transition ticket")
+                return
         try:
             self.transition_issue(
                 issue,
-                list(
-                    filter(
-                        lambda x: ticket.status in x["to"].get("name"),
-                        self.transitions(issue),
-                    )
-                )[0]["id"],
+                self.status_mappings[ticket.status],
             )
             logger.info(f"Transitioned {issue}")
-        except Exception:
+        except (JIRAError, IndexError, KeyError, AttributeError):
             logger.warning("Cannot transition issue")
+
+    def update_status_mappings(self, ticket, issue):
+        """
+        Update status mappings from user input.
+
+        :param JIRA.issue issue: The JIRA issue
+        :param Ticket ticket: The Ticket to retrieve the assignee from
+        """
+        # Populate jira statuses for specific Issue
+        jira_statuses = list(
+            set(
+                [
+                    transition["to"].get("name")
+                    for transition in self.transitions(issue)
+                ]
+            )
+        )
+
+        # Read JIRA status
+        jira_status = input(
+            f"Please provide a mapping for {ticket.status} : "
+            f"\nEligible options are {jira_statuses}"
+        )
+
+        # Add mapping if not exists
+        if jira_status not in jira_statuses:
+            while True:
+                jira_status = input(
+                    f"{jira_status} is not a valid choice. "
+                    f"Please provide one of {jira_statuses}."
+                )
+                if jira_status in jira_statuses:
+                    self.status_mappings[ticket.status] = jira_status
+                    break
+        else:
+            self.status_mappings[ticket.status] = jira_status
+
+    def create_type_mappings(self, tickets):
+        """
+        Create mappings between ClickUp labels and Jira Ticket types.
+
+        :param list(Ticket) tickets: The tickets to create
+        :return: The type mappings
+        :rtype: dict
+        """
+        # Populate ClickUp labels found and JIRA types available
+        click_up_labels = list(
+            set(
+                [
+                    ticket_type
+                    for ticket in tickets
+                    for ticket_type in ticket.type.split(",")
+                ]
+            )
+        )
+        jira_types = list(
+            set([issue_type.name for issue_type in self.issue_types()])
+        )
+
+        # Create default mappings
+        try:
+            default_jira_type = list(
+                filter(lambda x: DEFAULT_ISSUE_TYPE == x, jira_types)
+            )[0]
+        except KeyError:
+            default_jira_type = jira_types[0]
+        default_mapping = {
+            click_up_label: default_jira_type
+            for click_up_label in click_up_labels
+        }
+
+        # Select between custom or standard mappings
+        selection = input(
+            f"Default mapping is : {default_mapping}"
+            f"\nPress Y if you want to use this mapping "
+            f"or N if you want to assign a mapping of your own."
+        )
+
+        # Handle all selections
+        if selection not in ["N", "Y"]:
+            while True:
+                selection = input(
+                    f"{selection} is not a valid choice. Please write Y on N."
+                )
+                if selection == "N":
+                    return self.__compute_type_mappings(
+                        click_up_labels, jira_types
+                    )
+                elif selection == "Y":
+                    return default_mapping
+
+        elif selection == "Y":
+            return default_mapping
+        else:
+            return self.__compute_type_mappings(click_up_labels, jira_types)
+
+    @staticmethod
+    def __compute_type_mappings(click_up_labels, jira_types):
+        """
+        Compute the type mappings.
+
+        :param list(str) click_up_labels: The ClickUp labels
+        :param list(str) jira_types: The JIRA types
+        :return: The computed mappings
+        :rtype: dict
+        """
+        mappings = {}
+        for click_up_label in click_up_labels:
+            printable_label = click_up_label if click_up_label else "''"
+            jira_type = input(
+                f"Please provide a mapping for {printable_label} : "
+                f"\nEligible options are {jira_types}"
+            )
+            if jira_type not in jira_types:
+                while True:
+                    jira_type = input(
+                        f"{jira_type} is not a valid choice. "
+                        f"Please provide on of {jira_types}."
+                    )
+                    if jira_type in jira_types:
+                        mappings[click_up_label] = jira_type
+                        break
+            else:
+                mappings[click_up_label] = jira_type
+        return mappings
+
+    def add_comments(self, issue, ticket):
+        """
+        Add comments to JIRA Issue.
+
+        :param JIRA.issue issue: The issue to add comments to
+        :param Ticket ticket: The ticket to read comments from
+        """
         for comment in ticket.comments:
             logger.info(f"Adding {comment} in {issue}")
             if comment.text:
                 text_with_commenter = (
                     f"{comment.commenter} " f"said: {comment.text}"
                 )
-                self.add_comment(issue, text_with_commenter)
+                try:
+                    self.add_comment(issue, text_with_commenter)
+                except JIRAError:
+                    logger.warning(f"Failed to add {comment} in {issue}")
+                    continue
 
     def get_issue_from_summary(self, project, summary):
+        """
+        Get issue from given summary.
+
+        :param str project: Project to search in
+        :param str summary: The summary string
+        :return: The JIRA issue
+        :rtype: JIRA.issue
+        """
         jql = (
             f'project = "{project}" and summary '
             f'~ "{summary}" ORDER BY created DESC'
@@ -185,14 +311,18 @@ class JIRAHandler(JIRA):
         includeActive=True,
         includeInactive=False,
     ):
-        """Get a list of user Resources that match the specified search string.
+        """
+        Get a list of user Resources that match the specified search string.
 
-        :param user: a string to match usernames, name or email against.
-        :param startAt: index of the first user to return.
-        :param maxResults: maximum number of users to return.
-                If maxResults evaluates as False, it will try to get all items in batches.
-        :param includeActive: If true, then active users are included in the results.
-        :param includeInactive: If true, then inactive users are included in the results.
+        :param str user: a string to match usernames, name or email against.
+        :param int startAt: index of the first user to return.
+        :param int maxResults: maximum number of users to return.
+                If maxResults evaluates as False, it will try to get all items
+                 in batches.
+        :param bool includeActive: If true, then active users are included in
+            the results.
+        :param bool includeInactive: If true, then inactive users are included
+            in the results.
         """
         params = {
             "query": user,
@@ -204,15 +334,15 @@ class JIRAHandler(JIRA):
         )
 
     def assign_issue(self, issue, assignee):
-        """Assign an issue to a user. None will set it to unassigned. -1 will set it to Automatic.
+        """
+        Assign an issue to a user.
 
-        :param issue: the issue ID or key to assign
-        :param assignee: the user to assign the issue to
+        None will set it to unassigned. -1 will set it to Automatic.
 
-        :type issue: int or str
-        :type assignee: str
-
+        :param int|str issue: the issue ID or key to assign
+        :param str assignee: the user to assign the issue to
         :rtype: bool
+        :rtype: Assignment succeeded
         """
         url = (
             self._options["server"]

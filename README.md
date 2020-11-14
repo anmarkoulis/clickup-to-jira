@@ -1,4 +1,8 @@
+[license-url]: https://opensource.org/licenses/MIT
+[license-image]: https://img.shields.io/npm/l/make-coverage-badge.svg
 ![CI](https://github.com/anmarkoulis/clickup-to-jira/workflows/CI/badge.svg)
+[![License][license-image]][license-url]
+
 # Clickup to JIRA Converter
 
 ## Description

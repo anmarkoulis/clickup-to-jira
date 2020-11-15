@@ -34,8 +34,8 @@ def main():
     new_tickets = converter.convert(tickets)
 
     # Create JIRA tickets
-    jira_handler.create_tickets(new_tickets, cli_params.JIRA_PROJECT)
+    jira_handler.create_jira_issues(new_tickets, cli_params.JIRA_PROJECT)
 
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     main()

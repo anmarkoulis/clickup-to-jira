@@ -18,9 +18,9 @@ class JIRAHandler(JIRA):
     status_mappings = {}
     type_mappings = {}
 
-    def create_tickets(self, tickets, project):
+    def create_jira_issues(self, tickets, project):
         """
-        Create JIRA tickets:
+        Create JIRA issues:
 
         :param list(Ticket) tickets: The tickets to create
         :param str project: The project name
@@ -37,12 +37,12 @@ class JIRAHandler(JIRA):
         # Create all tickets
         issues = list()
         for ticket in tickets:
-            issues.append(self.create_ticket(ticket, cur_project.id))
+            issues.append(self.create_jira_issue(ticket, cur_project.id))
         return issues
 
-    def create_ticket(self, ticket, project):
+    def create_jira_issue(self, ticket, project):
         """
-        Create a JIRA ticket.
+        Create a JIRA issue.
 
         :param Ticket ticket: The ticket to create
         :param str project: The project name
@@ -56,7 +56,7 @@ class JIRAHandler(JIRA):
             return
 
         # Create issue in JIRA
-        issue = self.create_jira_issue(ticket, project)
+        issue = self.create_base_jira_issue(ticket, project)
         if not issue:
             logger.exception(f"Cannot create issue from {ticket}.")
             return
@@ -70,7 +70,7 @@ class JIRAHandler(JIRA):
         # Add comments in ticket
         self.add_comments(issue, ticket)
 
-    def create_jira_issue(self, ticket, project):
+    def create_base_jira_issue(self, ticket, project):
         """
         Create a JIRA issue given the ticket and the JIRA project.
 

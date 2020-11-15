@@ -41,7 +41,7 @@ setuptools.setup(
     ],
     entry_points={
         "console_scripts": [
-            "migrate = clickup_to_jira." "scripts.migrate:main"
+            "migrate_to_jira = clickup_to_jira.scripts.migrate:main"
         ],
     },
     python_requires=">=3.8",

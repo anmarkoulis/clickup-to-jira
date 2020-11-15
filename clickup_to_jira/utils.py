@@ -3,7 +3,7 @@ import os
 from argparse import ArgumentParser
 
 
-def initialize_logging():
+def initialize_logging():  # pragma: no cover
     """
     Initialize logging configuration.
     """

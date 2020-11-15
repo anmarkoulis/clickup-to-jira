@@ -43,11 +43,14 @@ class ClickUpToJIRAConverter:
         :rtype: Ticket
         """
         logger.info(f"converting ticket {ticket.name}")
+
         # Prepare entities for ticket
         ticket_type = ",".join([tag.name for tag in ticket.tags])
-        ticket_description = self.get_converted_description(ticket.description)
+        ticket_description = self._get_converted_description(
+            ticket.description
+        )
         ticket_status = ticket.status.status
-        subtasks = self.get_converted_subtasks(ticket.linked_tasks)
+        subtasks = self._get_converted_subtasks(ticket.linked_tasks)
 
         # Handle assignees
         if ticket.assignees:
@@ -70,7 +73,7 @@ class ClickUpToJIRAConverter:
         )
 
     @staticmethod
-    def get_converted_description(description):
+    def _get_converted_description(description):
         """
         Get the converted description.
 
@@ -81,7 +84,7 @@ class ClickUpToJIRAConverter:
         # todo Transform ClickUp Markdown to JIRA Markdown
         return description
 
-    def get_converted_subtasks(self, subtasks):
+    def _get_converted_subtasks(self, subtasks):
         """
         Get Converted subtasks.
 

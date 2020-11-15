@@ -7,6 +7,10 @@ logger = getLogger(__name__)
 
 
 class ClickUpToJIRAConverter:
+    """
+    Class responsible for converting ClickUp Tickets to JIRA Tickets.
+    """
+
     def __init__(self, click_up_handler, jira_handler):
         """
         Initialize the converter.

@@ -47,7 +47,7 @@ class JIRAHandler(JIRA):
         :param Ticket ticket: The ticket to create
         :param str project: The project name
         :return: The new ticket
-        :rtype: JIRA.issue
+        :rtype: jira.issue
         """
         logger.info(f"Creating {ticket.title} in JIRA.")
         # Check issue already exists
@@ -108,7 +108,7 @@ class JIRAHandler(JIRA):
         """
         Assign JIRA issue to a user.
 
-        :param JIRA.issue issue: The JIRA issue
+        :param jira.issue issue: The JIRA issue
         :param Ticket ticket: The Ticket to retrieve the assignee from
         """
         try:
@@ -122,7 +122,7 @@ class JIRAHandler(JIRA):
         """
         Transition JIRA issue to the desired status.
 
-        :param JIRA.issue issue: The JIRA issue
+        :param jira.issue issue: The JIRA issue
         :param Ticket ticket: The Ticket to retrieve the assignee from
         """
         if ticket.status not in self.status_mappings.keys():
@@ -144,7 +144,7 @@ class JIRAHandler(JIRA):
         """
         Update status mappings from user input.
 
-        :param JIRA.issue issue: The JIRA issue
+        :param jira.issue issue: The JIRA issue
         :param Ticket ticket: The Ticket to retrieve the assignee from
         """
         # Populate jira statuses for specific Issue
@@ -269,7 +269,7 @@ class JIRAHandler(JIRA):
         """
         Add comments to JIRA Issue.
 
-        :param JIRA.issue issue: The issue to add comments to
+        :param jira.issue issue: The issue to add comments to
         :param Ticket ticket: The ticket to read comments from
         """
         for comment in ticket.comments:
@@ -291,7 +291,7 @@ class JIRAHandler(JIRA):
         :param str project: Project to search in
         :param str summary: The summary string
         :return: The JIRA issue
-        :rtype: JIRA.issue
+        :rtype: jira.issue
         """
         jql = (
             f'project = "{project}" and summary '
@@ -316,9 +316,9 @@ class JIRAHandler(JIRA):
 
         :param str user: a string to match usernames, name or email against.
         :param int startAt: index of the first user to return.
-        :param int maxResults: maximum number of users to return.
-                If maxResults evaluates as False, it will try to get all items
-                 in batches.
+        :param int maxResults: maximum number of users to return. If
+            maxResults evaluates as False, it will try to get all items
+            in batches.
         :param bool includeActive: If true, then active users are included in
             the results.
         :param bool includeInactive: If true, then inactive users are included

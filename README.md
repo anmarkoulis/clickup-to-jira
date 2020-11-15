@@ -7,7 +7,7 @@
 
 ## Description
 
-This project is a small utility that helps migrating from Clickup to JIRA.
+This project is a small utility that helps migrating tasks from Clickup to JIRA.
 
 ## Installation
 
@@ -22,7 +22,32 @@ pip install .
 After installing the library run the following command.
 
 ```bash
-./clickup_to_jira_migrate
+migrate_to_jira [params]
+```
+### Execution Arguments
+
+You may use the following command to view all the execution arguments
+
+```bash
+migrate_to_jira -h
+```
+
+The options presented are the following:
+
+```bash
+usage: migrate_to_jira [-h] -TEAM TEAM -SPACE SPACE -PROJECT PROJECT [-LIST LIST] -JIRA_PROJECT JIRA_PROJECT
+
+Setup ClickUp and JIRA ticket parameters.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -TEAM TEAM            Team to look for tickets on
+  -SPACE SPACE          Space to look for tickets on
+  -PROJECT PROJECT      Project to look for tickets on
+  -LIST LIST            Lists to look for tickets on
+  -JIRA_PROJECT JIRA_PROJECT
+                        JIRA project to add tickets on
+
 ```
 
 Keep in mind that the following environmental variables need to have a proper value.

@@ -20,7 +20,8 @@ class ClickUpHandler(ClickUp):
         Get task comments.
 
         :param Task task: The task whose comments are to be retrieved
-        :return:
+        :return: The list of task comments
+        :rtype: list(Comment)
         """
         # Get comments from ClickUp
         self.api_url = self.api_url.replace("v1", "v2")
@@ -70,7 +71,8 @@ class ClickUpHandler(ClickUp):
         :param str space: The space name in ClickUp
         :param str project: The project name in ClickUp
         :param str|None lst: The list name in ClickUp if provided
-        :return:
+        :return: The list of ClickUp tasks
+        :rtype: ClickUp(Task)
         """
         cur_team = list(filter(lambda x: team in x.name, self.teams))[0]
         cur_space = list(filter(lambda x: space in x.name, cur_team.spaces))[0]
@@ -115,11 +117,10 @@ class ClickUpHandler(ClickUp):
     @staticmethod
     def get_sorted_tasks(tasks):
         """
-        Get ordered tasks,
+        Get ordered tasks with tasks before subtasks.
 
-        Tasks should be ordered in a way where tasks are placed before
-            subtasks.
         :param list(Task) tasks: The tasks list
+
         :return: The ordered tasks list
         :rtype: list(Task)
         """

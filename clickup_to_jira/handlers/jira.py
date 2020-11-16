@@ -156,6 +156,9 @@ class JIRAHandler(JIRA):
                 ]
             )
         )
+        # Check if mappings already exists for ticket status
+        if ticket.status in self.status_mappings.keys():
+            return
 
         # Read JIRA status
         jira_status = input(
@@ -197,13 +200,14 @@ class JIRAHandler(JIRA):
         jira_types = list(
             set([issue_type.name for issue_type in self.issue_types()])
         )
+        print(jira_types)
 
         # Create default mappings
         try:
             default_jira_type = list(
                 filter(lambda x: DEFAULT_ISSUE_TYPE == x, jira_types)
             )[0]
-        except KeyError:
+        except IndexError:
             default_jira_type = jira_types[0]
         default_mapping = {
             click_up_label: default_jira_type
@@ -274,9 +278,10 @@ class JIRAHandler(JIRA):
         """
         for comment in ticket.comments:
             logger.info(f"Adding {comment} in {issue}")
+            print(comment.text)
             if comment.text:
                 text_with_commenter = (
-                    f"{comment.commenter} " f"said: {comment.text}"
+                    f"{comment.commenter} said: {comment.text}"
                 )
                 try:
                     self.add_comment(issue, text_with_commenter)

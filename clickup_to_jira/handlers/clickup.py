@@ -4,6 +4,7 @@ from time import sleep
 from pyclickup import ClickUp
 
 from clickup_to_jira.comment import Comment
+from clickup_to_jira.utils import get_item_from_user_input
 
 logger = getLogger(__name__)
 
@@ -15,51 +16,41 @@ class ClickUpHandler(ClickUp):
     Class responsible for retrieving info from ClickUp
     """
 
-    def get_click_up_tickets(self, team, space, project, lst=None):
+    def get_click_up_tickets(self):
         """
         Get all ClickUp tickets.
 
-        :param str team: The team to check for tickets on
-        :param str space: The space to look for tickets on
-        :param str project: The project to look for tickets on
-        :param str lst: The list to look for tickets on
         :return: The list of tickets
         :rtype: list(Ticket)
         """
         logger.info("get clickup tickets")
 
-        tasks = self.get_tasks_from_click_up(team, space, project, lst)
+        tasks = self.get_tasks_from_click_up()
         tasks_with_comments = self.add_comments_to_tasks(tasks)
         tasks_with_parent = self.add_parent_to_tasks(tasks_with_comments)
 
         return self.get_sorted_tasks(tasks_with_parent)
 
-    def get_tasks_from_click_up(self, team, space, project, lst=None):
+    def get_tasks_from_click_up(self):
         """
         Get ClickUp tasks.
 
-        :param str team: The team name in ClickUp
-        :param str space: The space name in ClickUp
-        :param str project: The project name in ClickUp
-        :param str|None lst: The list name in ClickUp if provided
         :return: The list of ClickUp tasks
         :rtype: ClickUp(Task)
         """
-        cur_team = list(filter(lambda x: team in x.name, self.teams))[0]
-        cur_space = list(filter(lambda x: space in x.name, cur_team.spaces))[0]
-        cur_project = list(
-            filter(lambda x: project in x.name, cur_space.projects)
-        )[0]
+        cur_team = get_item_from_user_input("team", self.teams)
+        cur_space = get_item_from_user_input("space", cur_team.spaces)
+        cur_project = get_item_from_user_input("project", cur_space.projects)
+        lst = get_item_from_user_input(
+            "list", cur_project.lists, allow_none=True
+        )
 
         if not lst:
             return cur_project.get_all_tasks(
                 include_closed=True, subtasks=True
             )
         else:
-            cur_list = list(
-                filter(lambda x: lst in x.name, cur_project.lists)
-            )[0]
-            return cur_list.get_all_tasks(include_closed=True, subtasks=True)
+            return lst.get_all_tasks(include_closed=True, subtasks=True)
 
     def add_comments_to_tasks(self, tasks):
         """

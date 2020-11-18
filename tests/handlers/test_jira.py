@@ -26,7 +26,8 @@ class TestJIRAHandler(TestCase):
             basic_auth=(os.getenv("JIRA_USER"), os.getenv("JIRA_API_KEY")),
         )
 
-    def test_create_jira_issues(self):
+    @patch("clickup_to_jira.handlers.jira.get_item_from_user_input")
+    def test_create_jira_issues(self, get_item):
         self.handler.projects = MagicMock()
         self.handler.create_type_mappings = MagicMock()
         self.handler.create_jira_issue = MagicMock()
@@ -41,8 +42,9 @@ class TestJIRAHandler(TestCase):
 
         self.handler.projects.return_value = [jira_project]
         self.handler.create_jira_issue.side_effect = [jira_issue]
+        get_item.return_value = jira_project
 
-        output = self.handler.create_jira_issues([ticket], project)
+        output = self.handler.create_jira_issues([ticket])
 
         self.assertEqual(output, [jira_issue])
         self.handler.create_jira_issue.assert_called_once_with(
@@ -116,7 +118,35 @@ class TestJIRAHandler(TestCase):
         self.handler.transition_issue_to_proper_status.assert_not_called()
         self.handler.add_comments.assert_not_called()
 
-    def test_create_jira_issue_cannot_craete(self):
+    def test_create_jira_issue_cannot_get_existing(self):
+        self.handler.get_issue_from_summary = MagicMock()
+        self.handler.create_base_jira_issue = MagicMock()
+        self.handler.assign_issue_to_user = MagicMock()
+        self.handler.transition_issue_to_proper_status = MagicMock()
+        self.handler.add_comments = MagicMock()
+
+        project = "project"
+        ticket = MagicMock()
+        title = "title"
+        ticket.title = title
+
+        jira_issue = MagicMock()
+
+        self.handler.get_issue_from_summary.side_effect = JIRAError("Error")
+        self.handler.create_base_jira_issue.return_value = jira_issue
+
+        self.handler.create_jira_issue(ticket, project)
+
+        self.handler.get_issue_from_summary.assert_called_once_with(
+            project,
+            ticket.title,
+        )
+        self.handler.create_base_jira_issue.assert_not_called()
+        self.handler.assign_issue_to_user.assert_not_called()
+        self.handler.transition_issue_to_proper_status.assert_not_called()
+        self.handler.add_comments.assert_not_called()
+
+    def test_create_jira_issue_cannot_create(self):
         self.handler.get_issue_from_summary = MagicMock()
         self.handler.create_base_jira_issue = MagicMock()
         self.handler.assign_issue_to_user = MagicMock()

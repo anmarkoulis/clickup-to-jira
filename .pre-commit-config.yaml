@@ -4,6 +4,12 @@ exclude: docs|.git|.tox
 fail_fast: true
 repos:
   - hooks:
+      - id: commitizen
+        stages: [ commit-msg ]
+    repo: https://github.com/commitizen-tools/commitizen
+    rev: v2.4.2
+
+  - hooks:
       - id: detect-secrets
         args: [ '--baseline', '.secrets.baseline' ]
         exclude: (docs|README.md)

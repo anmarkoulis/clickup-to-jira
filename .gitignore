@@ -323,9 +323,12 @@ tags
 
 .pytest_cache/
 
-
+### PyCharm and VSCode files
 .idea
-.ipython/
-.env
-.envs/*
-!.envs/.local/
+.vscode
+
+### Node modules used on bump method of precommit
+
+ node_modules/*
+
+

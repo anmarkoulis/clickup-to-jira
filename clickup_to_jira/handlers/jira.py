@@ -5,6 +5,8 @@ from jira import JIRA
 from jira.exceptions import JIRAError
 from jira.resources import User
 
+from clickup_to_jira.utils import get_item_from_user_input
+
 logger = getLogger(__name__)
 
 DEFAULT_ISSUE_TYPE = "Story"
@@ -18,19 +20,16 @@ class JIRAHandler(JIRA):
     status_mappings = {}
     type_mappings = {}
 
-    def create_jira_issues(self, tickets, project):
+    def create_jira_issues(self, tickets):
         """
         Create JIRA issues:
 
         :param list(Ticket) tickets: The tickets to create
-        :param str project: The project name
         :return: The list of created JIRA issues
         :rtype: list(jira.issue)
         """
         # Create type mappings from tickets
-        cur_project = list(
-            filter(lambda x: project in x.name, self.projects())
-        )[0]
+        cur_project = get_item_from_user_input("project", self.projects())
         self.type_mappings = self.create_type_mappings(tickets)
         logger.info(self.type_mappings)
 
@@ -51,8 +50,12 @@ class JIRAHandler(JIRA):
         """
         logger.info(f"Creating {ticket.title} in JIRA.")
         # Check issue already exists
-        if self.get_issue_from_summary(project, ticket.title):
-            logger.warning(f"Ticket {ticket.title} already exists.")
+        try:
+            if self.get_issue_from_summary(project, ticket.title):
+                logger.warning(f"Ticket {ticket.title} already exists.")
+                return
+        except JIRAError as e:
+            logger.warning(e)
             return
 
         # Create issue in JIRA

@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from mock import MagicMock
+from mock import MagicMock, patch
 
 from clickup_to_jira.comment import Comment
 from clickup_to_jira.handlers import ClickUpHandler
@@ -22,21 +22,16 @@ class TestClickUpHandler(TestCase):
         sorted_tasks = [MagicMock()]
         self.handler.get_sorted_tasks.return_value = sorted_tasks
 
-        team = "team"
-        space = "space"
-        project = "project"
-        lst = "lst"
-        result = self.handler.get_click_up_tickets(team, space, project, lst)
+        result = self.handler.get_click_up_tickets()
 
         self.assertEqual(result, sorted_tasks)
 
-        self.handler.get_tasks_from_click_up.assert_called_once_with(
-            team, space, project, lst
-        )
+        self.handler.get_tasks_from_click_up.assert_called_once_with()
         self.handler.add_comments_to_tasks.assert_called_once_with(tasks)
         self.handler.get_sorted_tasks.assert_called_once_with(tasks_comment)
 
-    def test_get_tasks_from_click_up(self):
+    @patch("clickup_to_jira.handlers.clickup.get_item_from_user_input")
+    def test_get_tasks_from_click_up(self, get_item):
         team = "team"
         space = "space"
         project = "project"
@@ -55,21 +50,22 @@ class TestClickUpHandler(TestCase):
         project_obj.lists = [lst_obj]
         lst_obj.name = lst
 
+        get_item.side_effect = [team_obj, space_obj, project_obj, lst_obj]
+
         tasks = [MagicMock()]
         lst_obj.get_all_tasks.return_value = tasks
 
         self.handler._teams = [team_obj]
 
-        output = self.handler.get_tasks_from_click_up(
-            team, space, project, lst
-        )
+        output = self.handler.get_tasks_from_click_up()
 
         self.assertEqual(output, tasks)
         lst_obj.get_all_tasks.assert_called_once_with(
             include_closed=True, subtasks=True
         )
 
-    def test_get_tasks_from_click_up_no_lst(self):
+    @patch("clickup_to_jira.handlers.clickup.get_item_from_user_input")
+    def test_get_tasks_from_click_up_no_lst(self, get_item):
         team = "team"
         space = "space"
         project = "project"
@@ -84,16 +80,14 @@ class TestClickUpHandler(TestCase):
         space_obj.projects = [project_obj]
         project_obj.name = project
 
+        get_item.side_effect = [team_obj, space_obj, project_obj, None]
+
         tasks = [MagicMock()]
         project_obj.get_all_tasks.return_value = tasks
 
         self.handler._teams = [team_obj]
 
-        output = self.handler.get_tasks_from_click_up(
-            team,
-            space,
-            project,
-        )
+        output = self.handler.get_tasks_from_click_up()
 
         self.assertEqual(output, tasks)
         project_obj.get_all_tasks.assert_called_once_with(

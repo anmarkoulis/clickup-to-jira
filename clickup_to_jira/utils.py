@@ -1,6 +1,5 @@
 import logging
 import os
-from argparse import ArgumentParser
 
 
 def initialize_logging():  # pragma: no cover
@@ -21,39 +20,71 @@ def initialize_logging():  # pragma: no cover
     logging.getLogger(__name__).propagate = True
 
 
-def get_cli_arguments():
+def get_item_from_user_input(name, selection_list, allow_none=False):
     """
-    Get CLI arguments.
+    Get proper item from list of items from user input.
 
-    :return: The arguments
-    :rtype: dict
+    :param str name: The name of the parameter to be specified.
+    :param list selection_list: The ClickUp entity to search in.
+    :param bool allow_none: Allow the user to not specify a value.
+    :return: The proper item
+    :rtype: ClickUp.Team|ClickUp.Space|ClickUp.Project|ClickUp.list
     """
-    parser = ArgumentParser(
-        description="Setup ClickUp and JIRA ticket parameters."
-    )
-    parser.add_argument(
-        "-TEAM", type=str, help="Team to look for tickets on", required=True
-    )
-    parser.add_argument(
-        "-SPACE", type=str, help="Space to look for tickets on", required=True
-    )
-    parser.add_argument(
-        "-PROJECT",
-        type=str,
-        help="Project to look for tickets on",
-        required=True,
-    )
-    parser.add_argument(
-        "-LIST",
-        type=str,
-        help="Lists to look for tickets on",
-        required=False,
-    )
-    parser.add_argument(
-        "-JIRA_PROJECT",
-        type=str,
-        help="JIRA project to add tickets on",
-        required=True,
+    if allow_none and get_with_to_specify_outcome(name):
+        return None
+
+    # Get item from user input
+    item_names = [item.name for item in selection_list]
+    item_input = input(
+        f"Please provide the name of the {name} you want to "
+        f"browse for tickets. Eligible options are"
+        f" {item_names}. : "
     )
 
-    return parser.parse_args()
+    # Add mapping if not exists
+    if item_input not in item_names:
+        while True:
+            item_input = input(
+                f"{item_input} is not a valid choice. "
+                f"Please provide one of {item_names} : "
+            )
+            if item_input in item_names:
+                return list(
+                    filter(lambda x: item_input in x.name, selection_list)
+                )[0]
+    else:
+        return list(filter(lambda x: item_input in x.name, selection_list))[0]
+
+
+def get_with_to_specify_outcome(name):
+    """
+    Get if user does not wish to specify an outcome.
+
+    :param str name: The name of the parameter which is allowed to not be
+        set.
+    :return: Allow none ot not
+    :rtype: bool
+    """
+    accepted_inputs = ["Y", "N"]
+    item_input = input(
+        f"Do you wish to specify a {name}. If so please press Y. Else"
+        f" press N : "
+    )
+
+    # Add mapping if not exists
+    if item_input not in accepted_inputs:
+        while True:
+            item_input = input(
+                f"{item_input} is not a valid choice. "
+                f"Please provide one of {accepted_inputs} : "
+            )
+            if item_input == "Y":
+                return False
+            elif item_input == "N":
+                return True
+
+    else:
+        if item_input == "Y":
+            return False
+        elif item_input == "N":
+            return True

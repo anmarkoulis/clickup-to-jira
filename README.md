@@ -1,10 +1,12 @@
 ![CI](https://github.com/anmarkoulis/clickup-to-jira/workflows/CI/badge.svg)
- [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-# Clickup to JIRA Converter
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+[![Documentation Status](https://readthedocs.org/projects/clickup-to-jira/badge/?version=latest)](https://clickup-to-jira.readthedocs.io/en/latest/?badge=latest)
+# ClickUp to JIRA Converter
 
 ## Description
 
-This project is a small utility that helps migrating tasks from Clickup to JIRA.
+This project is a small utility that helps migrating tasks from ClickUp to JIRA.
 
 ## Installation
 
@@ -19,39 +21,16 @@ pip install .
 After installing the library run the following command.
 
 ```bash
-migrate_to_jira [params]
-```
-### Execution Arguments
-
-You may use the following command to view all the execution arguments
-
-```bash
-migrate_to_jira -h
-```
-
-The options presented are the following:
-
-```bash
-usage: migrate_to_jira [-h] -TEAM TEAM -SPACE SPACE -PROJECT PROJECT [-LIST LIST] -JIRA_PROJECT JIRA_PROJECT
-
-Setup ClickUp and JIRA ticket parameters.
-
-optional arguments:
-  -h, --help            show this help message and exit
-  -TEAM TEAM            Team to look for tickets on
-  -SPACE SPACE          Space to look for tickets on
-  -PROJECT PROJECT      Project to look for tickets on
-  -LIST LIST            Lists to look for tickets on
-  -JIRA_PROJECT JIRA_PROJECT
-                        JIRA project to add tickets on
-
+migrate_to_jira
 ```
 
 Keep in mind that the following environmental variables need to have a proper value.
 
-1. `JIRA_URL`
-1. `JIRA_API_KEY`
-1. `JIRA_USER`
-1. `CLICK_UP_API_KEY`
-1. `LOGGING_FORMAT`
-1. `LOGGING_LEVEL`
+|Environmental Variable|Required|Default|Description                                          |
+|----------------------|--------|-------|-----------------------------------------------------|
+|`JIRA_URL`            |True    |None   |The base URL for JIRA API                            |
+|`JIRA_API_KEY`        |True    |None   |The API key created for accessing JIRA               |
+|`JIRA_USER`           |True    |None   |Email of the JIRA user the API key belongs to        |
+|`CLICKUP_API_KEY`     |True    |None   |The API key created for accessing ClickUp            |
+|`LOGGING_FORMAT`      |False   |%(asctime)s %(name)-12s:" " %(levelname)-" "8s -  " "%(message)s|The format of the application logs|
+|`LOGGING_LEVEL`       |False   |INFO   |The logging level of the application

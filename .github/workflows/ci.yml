@@ -14,9 +14,9 @@ on:
       - 'refactor/**'
       - 'build/**'
       - 'test/**'
-    create:
-      tags:
-        - v*
+  create:
+    tags:
+      - v*
 
 jobs:
   precommit:

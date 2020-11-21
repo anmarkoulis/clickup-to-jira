@@ -2,6 +2,21 @@ name: CI
 
 on:
   push:
+    branches:
+      - 'feat/**'
+      - 'ci/**'
+      - 'issue/**'
+      - 'master'
+      - 'develop'
+      - 'hotfix/**'
+      - 'bug/**'
+      - 'fix/**'
+      - 'refactor/**'
+      - 'build/**'
+      - 'test/**'
+    create:
+      tags:
+        - v*
 
 jobs:
   precommit:

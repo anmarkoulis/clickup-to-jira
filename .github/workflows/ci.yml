@@ -69,6 +69,8 @@ jobs:
       - unittest
       - documentation
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
       - name: Install dependencies
         uses: actions/setup-node@v1
         with:

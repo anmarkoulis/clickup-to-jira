@@ -8,7 +8,7 @@ from clickup_to_jira.utils import get_item_from_user_input
 
 logger = getLogger(__name__)
 
-SLEEP_PER_COMMENT = 0.1
+SLEEP_PER_REQUEST = 1.1 * 60 / 100  # Rate is 100req / sec. Add 10% margin
 
 
 class ClickUpHandler(ClickUp):
@@ -62,7 +62,7 @@ class ClickUpHandler(ClickUp):
         """
         for task in tasks:
             logger.info(f"Retrieving task {task.name}")
-            sleep(SLEEP_PER_COMMENT)
+            sleep(SLEEP_PER_REQUEST)
             task.comments = self.get_task_comments(task)
         return tasks
 

@@ -24,7 +24,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="clickup-to-jira",
-    version="0.1.0",
+    version="0.0.1",
     author="Antonis Markoulis",
     author_email="amarkoulis@hotmail.com",
     description="A utility that helps migrating from Clickup to JIRA",

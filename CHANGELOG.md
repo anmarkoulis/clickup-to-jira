@@ -1,3 +1,9 @@
+## v1.0.1 (2020-12-12)
+
+### Fix
+
+- **inputs**: expect user input in a new line
+
 ## v1.0.0 (2020-12-12)
 
 ### Feat

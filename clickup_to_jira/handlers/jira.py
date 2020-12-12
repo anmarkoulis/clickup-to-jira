@@ -165,8 +165,8 @@ class JIRAHandler(JIRA):
 
         # Read JIRA status
         jira_status = input(
-            f"Please provide a mapping for {ticket.status} : "
-            f"\nEligible options are {jira_statuses}"
+            f"Please provide a mapping for {ticket.status}."
+            f"\nEligible options are {jira_statuses} :\n"
         )
 
         # Add mapping if not exists
@@ -174,7 +174,7 @@ class JIRAHandler(JIRA):
             while True:
                 jira_status = input(
                     f"{jira_status} is not a valid choice. "
-                    f"Please provide one of {jira_statuses}."
+                    f"Please provide one of {jira_statuses} :\n"
                 )
                 if jira_status in jira_statuses:
                     self.status_mappings[ticket.status] = jira_status
@@ -221,14 +221,15 @@ class JIRAHandler(JIRA):
         selection = input(
             f"Default mapping is : {default_mapping}"
             f"\nPress Y if you want to use this mapping "
-            f"or N if you want to assign a mapping of your own."
+            f"or N if you want to assign a mapping of your own :\n"
         )
 
         # Handle all selections
         if selection not in ["N", "Y"]:
             while True:
                 selection = input(
-                    f"{selection} is not a valid choice. Please write Y on N."
+                    f"{selection} is not a valid choice. "
+                    f"Please write Y on N :\n"
                 )
                 if selection == "N":
                     return self.__compute_type_mappings(
@@ -256,14 +257,14 @@ class JIRAHandler(JIRA):
         for click_up_label in click_up_labels:
             printable_label = click_up_label if click_up_label else "''"
             jira_type = input(
-                f"Please provide a mapping for {printable_label} : "
-                f"\nEligible options are {jira_types}"
+                f"Please provide a mapping for {printable_label}."
+                f"\nEligible options are {jira_types} :\n"
             )
             if jira_type not in jira_types:
                 while True:
                     jira_type = input(
                         f"{jira_type} is not a valid choice. "
-                        f"Please provide on of {jira_types}."
+                        f"Please provide on of {jira_types} :\n"
                     )
                     if jira_type in jira_types:
                         mappings[click_up_label] = jira_type

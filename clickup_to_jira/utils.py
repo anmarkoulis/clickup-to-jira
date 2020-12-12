@@ -38,7 +38,7 @@ def get_item_from_user_input(name, selection_list, allow_none=False):
     item_input = input(
         f"Please provide the name of the {name} you want to "
         f"browse for tickets. Eligible options are"
-        f" {item_names}. : "
+        f" {item_names} :\n"
     )
 
     # Add mapping if not exists
@@ -46,7 +46,7 @@ def get_item_from_user_input(name, selection_list, allow_none=False):
         while True:
             item_input = input(
                 f"{item_input} is not a valid choice. "
-                f"Please provide one of {item_names} : "
+                f"Please provide one of {item_names} :\n"
             )
             if item_input in item_names:
                 return list(
@@ -68,7 +68,7 @@ def get_with_to_specify_outcome(name):
     accepted_inputs = ["Y", "N"]
     item_input = input(
         f"Do you wish to specify a {name}. If so please press Y. Else"
-        f" press N : "
+        f" press N : \n"
     )
 
     # Add mapping if not exists
@@ -76,7 +76,7 @@ def get_with_to_specify_outcome(name):
         while True:
             item_input = input(
                 f"{item_input} is not a valid choice. "
-                f"Please provide one of {accepted_inputs} : "
+                f"Please provide one of {accepted_inputs} : \n"
             )
             if item_input == "Y":
                 return False

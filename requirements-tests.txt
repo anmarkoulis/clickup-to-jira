@@ -1,7 +1,7 @@
-wheel
-mock
-coverage
-freezegun
-pre-commit
-pylint
-pytest
+wheel==0.36.1
+mock==4.0.3
+coverage==5.3
+freezegun==1.0.0
+pre-commit==2.9.3
+pylint==2.6.0
+pytest==6.1.2

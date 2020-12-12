@@ -1,0 +1,16 @@
+name: 'Get Release Notes'
+description: 'Get release notes for specified version reading from a Changelog'
+inputs:
+  tag_name:
+    description: "Name of the tag whose release notes we are looking for"
+    required: true
+  changelog:
+    description: "Path to changelog file to be parsed"
+    required: true
+outputs:
+  notes:
+    description: "The serialized dict of the notes. Access the notes from the notes key of the dict"
+runs:
+  using: "docker"
+  image: "Dockerfile"
+

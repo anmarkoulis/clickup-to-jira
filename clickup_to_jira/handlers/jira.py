@@ -323,7 +323,7 @@ class JIRAHandler(JIRA):
         """
         Get a list of user Resources that match the specified search string.
 
-        :param str user: a string to match usernames, name or email against.
+        :param pyclickup.User user: a string to match usernames, name or email against.
         :param int startAt: index of the first user to return.
         :param int maxResults: maximum number of users to return. If
             maxResults evaluates as False, it will try to get all items
@@ -333,8 +333,28 @@ class JIRAHandler(JIRA):
         :param bool includeInactive: If true, then inactive users are included
             in the results.
         """
+
+        # if no user object is given, obviously no user will be found
+        if not user:
+            # still use function to return proper empty set for handling after return
+            # todo: performance improvement: find our proper format and return empty set instead of actually doing a search
+            return self._fetch_pages(User, None, "user/search", startAt, maxResults, {"query": None})
+
+        # first attempt: try to locate by mail address
         params = {
-            "query": user,
+            "query": user.email,
+            "includeActive": includeActive,
+            "includeInactive": includeInactive,
+        }
+        fp = self._fetch_pages(
+            User, None, "user/search", startAt, maxResults, params
+        )
+        if fp:
+          return fp
+
+        # second attempt: search by name
+        params = {
+            "query": user.username,
             "includeActive": includeActive,
             "includeInactive": includeInactive,
         }

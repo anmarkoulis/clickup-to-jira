@@ -70,6 +70,7 @@ class ClickUpToJIRAConverter:
             assignee=ticket_assignee,
             comments=ticket.comments,
             parent=ticket.parent,
+            url=ticket.url,
         )
 
     @staticmethod

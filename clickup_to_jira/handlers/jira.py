@@ -73,6 +73,15 @@ class JIRAHandler(JIRA):
         # Add comments in ticket
         self.add_comments(issue, ticket)
 
+        # check if links should be set
+        if os.getenv("JIRACLICKUPLINK"):
+            # add link to clickup
+            self.add_simple_link(issue, {
+                "url": ticket.url,
+                "title": f"ClickUp issue {ticket.title}",
+            })
+
+
     def create_base_jira_issue(self, ticket, project):
         """
         Create a JIRA issue given the ticket and the JIRA project.

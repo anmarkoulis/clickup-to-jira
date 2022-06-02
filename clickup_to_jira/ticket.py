@@ -17,3 +17,4 @@ class Ticket:
     assignee: str
     parent: str
     comments: list
+    url: str

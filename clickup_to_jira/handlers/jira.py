@@ -4,6 +4,7 @@ from logging import getLogger
 from jira import JIRA
 from jira.exceptions import JIRAError
 from jira.resources import User
+import os
 
 from clickup_to_jira.utils import get_item_from_user_input
 
@@ -72,6 +73,15 @@ class JIRAHandler(JIRA):
 
         # Add comments in ticket
         self.add_comments(issue, ticket)
+
+        # check if links should be set
+        if os.getenv("JIRACLICKUPLINK"):
+            # add link to clickup
+            self.add_simple_link(issue, {
+                "url": ticket.url,
+                "title": f"ClickUp issue {ticket.title}",
+            })
+
 
     def create_base_jira_issue(self, ticket, project):
         """

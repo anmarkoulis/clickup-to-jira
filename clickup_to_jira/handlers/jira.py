@@ -83,6 +83,11 @@ class JIRAHandler(JIRA):
         :rtype: Jira.issue
         """
         try:
+            # Get creator user id
+            c = self.search_users(user=ticket.creator)
+            # reporter needs to be dict with id
+            reporter = {"id": c[0].accountId} if c and c[0].accountId else None
+            
             # Populate basic data for ticket creation
             issue_data = {
                 "project": project,
@@ -93,6 +98,7 @@ class JIRAHandler(JIRA):
                 else {"name": "Subtask"},
                 "summary": ticket.title,
                 "description": ticket.description,
+                "reporter": reporter,
             }
 
             # Handle case where issue is subtasks

@@ -33,4 +33,5 @@ Keep in mind that the following environmental variables need to have a proper va
 |`JIRA_USER`           |True    |None   |Email of the JIRA user the API key belongs to        |
 |`CLICKUP_API_KEY`     |True    |None   |The API key created for accessing ClickUp            |
 |`LOGGING_FORMAT`      |False   |%(asctime)s %(name)-12s:" " %(levelname)-" "8s -  " "%(message)s|The format of the application logs|
-|`LOGGING_LEVEL`       |False   |INFO   |The logging level of the application
+|`LOGGING_LEVEL`       |False   |INFO   |The logging level of the application                 |
+|`STATUSMAP`           |False   |None   |Filename/path of status map file. Format: clickupvalue=jiravalue, per line|

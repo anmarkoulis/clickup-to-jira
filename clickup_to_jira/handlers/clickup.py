@@ -76,9 +76,6 @@ class ClickUpHandler(ClickUp):
         :rtype: list(Task)
         """
         for task in tasks:
-            task.parent = None
-
-        for task in tasks:
             logger.info(f"Retrieving father for task {task.name}")
             try:
                 task.parent = list(
@@ -128,10 +125,41 @@ class ClickUpHandler(ClickUp):
         :return: The ordered tasks list
         :rtype: list(Task)
         """
-        sorted_tasks = list()
-        for task in tasks:
+
+        sorted_tasks = []
+
+        to_add = tasks.copy()
+        resubmission = []
+
+        # get all tasks without parents first, resubmit everything else
+        while to_add:
+            task = to_add.pop()
             if task.parent:
-                sorted_tasks.append(task)
+                resubmission.append(task)
             else:
-                sorted_tasks.insert(0, task)
+                sorted_tasks.append(task)
+
+        # iterate through the list as long as there are resubmissions (for more than 2 levels of nesting)
+        # all issues will have parents, as we already handled the ones without
+        while resubmission:
+            to_add = resubmission.copy()
+            resubmission = []
+
+            while to_add:
+                task = to_add.pop()
+                loc = 0
+                foundParent = False
+
+                # look for parent in already sorted tasks
+                for stask in sorted_tasks:
+                    loc = loc + 1
+                    if task.parent == stask.name:
+                        # found parent item, so add after this
+                        sorted_tasks.insert(loc, task)
+                        foundParent = True
+                        break
+
+                if not foundParent:
+                    resubmission.append(task)
+
         return sorted_tasks

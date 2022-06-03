@@ -4,6 +4,7 @@ from logging import getLogger
 from jira import JIRA
 from jira.exceptions import JIRAError
 from jira.resources import User
+import os
 
 from clickup_to_jira.utils import get_item_from_user_input
 
@@ -72,6 +73,18 @@ class JIRAHandler(JIRA):
 
         # Add comments in ticket
         self.add_comments(issue, ticket)
+    
+        # handle sub-tasks as links, if configured
+        if os.getenv("SUBTASKS") == "linked" and os.getenv("LINKEDTYPE") and ticket.parent:
+            parent_list = self.get_issue_from_summary(project, ticket.parent)
+            if parent_list:
+                logger.info(f"Ticket {ticket.title} has parent. Will use linking")
+                self.create_issue_link(
+                    os.getenv("LINKEDTYPE"),
+                    inwardIssue=issue.key,
+                    outwardIssue=parent_list[0].key
+                )
+
 
     def create_base_jira_issue(self, ticket, project):
         """
@@ -86,20 +99,21 @@ class JIRAHandler(JIRA):
             # Populate basic data for ticket creation
             issue_data = {
                 "project": project,
-                "issuetype": {
-                    "name": self.type_mappings[ticket.type.split(",")[0]]
-                }
-                if not ticket.parent
-                else {"name": "Subtask"},
+                "issuetype": { "name": self.type_mappings[ticket.type.split(",")[0]] },
                 "summary": ticket.title,
                 "description": ticket.description,
             }
 
-            # Handle case where issue is subtasks
-            parent_list = self.get_issue_from_summary(project, ticket.parent)
-            if parent_list:
-                logger.info(f"Ticket {ticket.title} has parent")
-                issue_data["parent"] = {"id": parent_list[0].id}
+            # Sub-task handling will only work if there is only ONE level of sub-tasks,
+            # Jira cannot assign Sub-tasks to Sub-tasks
+            if os.getenv("SUBTASKS") == "subtask":
+                issue_data["issuetype"] = { "name": "Sub-task" }
+
+                # Handle case where issue is subtasks
+                parent_list = self.get_issue_from_summary(project, ticket.parent)
+                if parent_list:
+                    logger.info(f"Ticket {ticket.title} has parent. Will use Sub-task")
+                    issue_data["parent"] = {"id": parent_list[0].id}
 
             # Create the ticket
             return self.create_issue(**issue_data)

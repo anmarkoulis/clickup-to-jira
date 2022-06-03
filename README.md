@@ -33,4 +33,6 @@ Keep in mind that the following environmental variables need to have a proper va
 |`JIRA_USER`           |True    |None   |Email of the JIRA user the API key belongs to        |
 |`CLICKUP_API_KEY`     |True    |None   |The API key created for accessing ClickUp            |
 |`LOGGING_FORMAT`      |False   |%(asctime)s %(name)-12s:" " %(levelname)-" "8s -  " "%(message)s|The format of the application logs|
-|`LOGGING_LEVEL`       |False   |INFO   |The logging level of the application
+|`LOGGING_LEVEL`       |False   |INFO   |The logging level of the application                 |
+|`SUBTASKS`            |False   |None   |None, "subtask" for Jira sub-task handling (limited to one level of subtasks!), "linked" for Jira linking handling. LINKEDTYPE is mandatory then!|
+|`LINKEDTYPE`          |Depends |None   |Issue linking type name. Outward link should be parent|

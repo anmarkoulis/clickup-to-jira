@@ -76,9 +76,6 @@ class ClickUpHandler(ClickUp):
         :rtype: list(Task)
         """
         for task in tasks:
-            task.parent = None
-
-        for task in tasks:
             logger.info(f"Retrieving father for task {task.name}")
             try:
                 task.parent = list(

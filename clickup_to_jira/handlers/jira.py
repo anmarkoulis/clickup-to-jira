@@ -107,11 +107,11 @@ class JIRAHandler(JIRA):
             # Sub-task handling will only work if there is only ONE level of sub-tasks,
             # Jira cannot assign Sub-tasks to Sub-tasks
             if os.getenv("SUBTASKS") == "subtask":
-                issue_data["issuetype"] = { "name": "Sub-task" }
 
                 # Handle case where issue is subtasks
                 parent_list = self.get_issue_from_summary(project, ticket.parent)
                 if parent_list:
+                    issue_data["issuetype"] = { "name": "Sub-task" }
                     logger.info(f"Ticket {ticket.title} has parent. Will use Sub-task")
                     issue_data["parent"] = {"id": parent_list[0].id}
 

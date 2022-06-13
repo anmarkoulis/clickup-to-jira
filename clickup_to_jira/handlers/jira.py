@@ -312,6 +312,7 @@ class JIRAHandler(JIRA):
         ]
         return proper_issues
 
+    search_users_CACHE = {}
     def search_users(
         self,
         user,
@@ -333,14 +334,20 @@ class JIRAHandler(JIRA):
         :param bool includeInactive: If true, then inactive users are included
             in the results.
         """
+        
+        if self.search_users_CACHE.get(user):
+          return self.search_users_CACHE.get(user)
+        
         params = {
             "query": user,
             "includeActive": includeActive,
             "includeInactive": includeInactive,
         }
-        return self._fetch_pages(
+        fp = self._fetch_pages(
             User, None, "user/search", startAt, maxResults, params
         )
+        self.search_users_CACHE[user] = fp
+        return fp
 
     def assign_issue(self, issue, assignee):
         """

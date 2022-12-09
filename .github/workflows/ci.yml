@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2.2.0
+        uses: actions/setup-python@v4.3.1
         with:
           python-version: 3.8.6
           architecture: x64
@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2.2.0
+        uses: actions/setup-python@v4.3.1
         with:
           python-version: 3.8.6
           architecture: x64
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2.2.0
+        uses: actions/setup-python@v4.3.1
         with:
           python-version: 3.8.6
           architecture: x64
@@ -85,7 +85,7 @@ jobs:
       - documentation
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2.2.0
+        uses: actions/setup-python@v4.3.1
         with:
           python-version: 3.8.6
           architecture: x64
@@ -116,7 +116,7 @@ jobs:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v2.2.0
+        uses: actions/setup-python@v4.3.1
         with:
           python-version: 3.8.6
           architecture: x64
@@ -157,7 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v2.2.0
+        uses: actions/setup-python@v4.3.1
         with:
           python-version: 3.8.6
           architecture: x64

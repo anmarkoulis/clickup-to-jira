@@ -1,11 +1,10 @@
 import json
 from logging import getLogger
 
+from clickup_to_jira.utils import get_item_from_user_input
 from jira import JIRA
 from jira.exceptions import JIRAError
 from jira.resources import User
-
-from clickup_to_jira.utils import get_item_from_user_input
 
 logger = getLogger(__name__)
 

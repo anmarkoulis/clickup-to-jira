@@ -1,11 +1,10 @@
 from unittest import TestCase
 
-from mock import MagicMock, patch
-
 from clickup_to_jira.utils import (
     get_item_from_user_input,
     get_with_to_specify_outcome,
 )
+from mock import MagicMock, patch
 
 
 class TestUtils(TestCase):

@@ -25,7 +25,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.0
         with:
-          python-version: 3.8.6
+          python-version: 3.8
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
@@ -40,7 +40,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.0
         with:
-          python-version: 3.8.6
+          python-version: 3.8
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
@@ -57,7 +57,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.0
         with:
-          python-version: 3.8.6
+          python-version: 3.8
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
@@ -87,7 +87,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.0
         with:
-          python-version: 3.8.6
+          python-version: 3.8
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
@@ -118,7 +118,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.0
         with:
-          python-version: 3.8.6
+          python-version: 3.8
           architecture: x64
       - name: Get version from tag
         id: tag_name
@@ -159,7 +159,7 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v2.2.0
         with:
-          python-version: 3.8.6
+          python-version: 3.8
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main

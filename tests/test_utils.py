@@ -10,7 +10,6 @@ from mock import MagicMock, patch
 class TestUtils(TestCase):
     @patch("builtins.input")
     def test_get_item_from_user_input_happy_path(self, get_input):
-
         item_1 = MagicMock()
         item_1_name = "Item 1"
         item_1.name = item_1_name

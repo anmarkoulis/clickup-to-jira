@@ -18,7 +18,7 @@ class TestJIRAHandler(TestCase):
         },
     )  # pylint: disable=arguments-differ
     @patch("clickup_to_jira.handlers.jira.JIRAHandler.__init__")
-    def setUp(self, handler__init):
+    def setUp(self, handler__init):  # pylint: disable=arguments-differ
         handler__init.return_value = None
         self.handler = JIRAHandler(
             os.getenv("JIRA_URL"),

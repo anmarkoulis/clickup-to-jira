@@ -175,7 +175,8 @@ class TestJIRAHandler(TestCase):
         self.handler.transition_issue_to_proper_status.assert_not_called()
         self.handler.add_comments.assert_not_called()
 
-    def test_create_vase_jira_issue_sunny_day(self):
+    def test_create_base_jira_issue_sunny_day(self):
+        self.handler.search_users = MagicMock()
         self.handler.get_issue_from_summary = MagicMock()
         self.handler.create_issue = MagicMock()
 
@@ -191,7 +192,8 @@ class TestJIRAHandler(TestCase):
         output = self.handler.create_base_jira_issue(ticket, project)
         self.assertEqual(output, jira_issue)
 
-    def test_create_vase_jira_issue_creation_error(self):
+    def test_create_base_jira_issue_creation_error(self):
+        self.handler.search_users = MagicMock()
         self.handler.get_issue_from_summary = MagicMock()
         self.handler.create_issue = MagicMock()
 

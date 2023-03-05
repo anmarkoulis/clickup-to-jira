@@ -1,14 +1,11 @@
 import json
+import os
 from logging import getLogger
 
 from clickup_to_jira.utils import get_item_from_user_input
 from jira import JIRA
 from jira.exceptions import JIRAError
 from jira.resources import User
-import os
-
-from clickup_to_jira.utils import get_item_from_user_input
-
 
 logger = getLogger(__name__)
 
@@ -36,9 +33,11 @@ class JIRAHandler(JIRA):
         if statusmap and os.path.exists(statusmap):
             with open(statusmap) as f:
                 for line in f:
-                    (clickupvalue, x, jiravalue) = line.partition("=")
-                    self.status_mappings[clickupvalue.strip()] = jiravalue.strip()
-                logger.info(f"Read status mappings from file.")
+                    (clickupvalue, _, jiravalue) = line.partition("=")
+                    self.status_mappings[
+                        clickupvalue.strip()
+                    ] = jiravalue.strip()
+                logger.info("Read status mappings from file.")
 
         # Create type mappings from tickets
         cur_project = get_item_from_user_input("project", self.projects())
@@ -88,11 +87,13 @@ class JIRAHandler(JIRA):
         # check if links should be set
         if os.getenv("JIRACLICKUPLINK"):
             # add link to clickup
-            self.add_simple_link(issue, {
-                "url": ticket.url,
-                "title": f"ClickUp issue {ticket.title}",
-            })
-
+            self.add_simple_link(
+                issue,
+                {
+                    "url": ticket.url,
+                    "title": f"ClickUp issue {ticket.title}",
+                },
+            )
 
     def create_base_jira_issue(self, ticket, project):
         """
@@ -108,7 +109,7 @@ class JIRAHandler(JIRA):
             c = self.search_users(user=ticket.creator)
             # reporter needs to be dict with id
             reporter = {"id": c[0].accountId} if c and c[0].accountId else None
-            
+
             # Populate basic data for ticket creation
             issue_data = {
                 "project": project,
@@ -249,9 +250,9 @@ class JIRAHandler(JIRA):
         if typemap and os.path.exists(typemap):
             with open(typemap) as f:
                 for line in f:
-                    (clickupvalue, x, jiravalue) = line.partition("=")
+                    (clickupvalue, _, jiravalue) = line.partition("=")
                     default_mapping[clickupvalue.strip()] = jiravalue.strip()
-                logger.info(f"Read status mappings from file.")
+                logger.info("Read status mappings from file.")
 
         # Select between custom or standard mappings
         selection = input(

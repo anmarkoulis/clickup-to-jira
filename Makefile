@@ -31,7 +31,7 @@ pre-commit: install-reqs install-tests
 	pre-commit run ${args}
 
 test: install-reqs install-tests
-	coverage run --source=clickup_to_jira/ -m pytest
+	pytest --cov=clickup_to_jira
 
 test-with-coverage-report: test
 	coverage report

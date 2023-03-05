@@ -538,6 +538,7 @@ class TestJIRAHandler(TestCase):
 
         self.handler._session = session
         self.handler._options = {"server": "server"}
+        self.handler.sys_version_info = (3, 4, 0)
         jira_issue = "issue"
         assignee = "assignee"
 

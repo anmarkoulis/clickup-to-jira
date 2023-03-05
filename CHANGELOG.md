@@ -1,3 +1,9 @@
+## v1.1.0 (2023-03-05)
+
+### Feat
+
+- create a Makefile, read type map from file, read status map from file and add link from Jira to Clickup if provided
+
 ## v1.0.2 (2023-01-09)
 
 ## v1.0.1 (2020-12-12)

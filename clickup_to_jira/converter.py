@@ -71,6 +71,7 @@ class ClickUpToJIRAConverter:
             creator=ticket.creator,
             comments=ticket.comments,
             parent=ticket.parent,
+            url=ticket.url,
         )
 
     @staticmethod

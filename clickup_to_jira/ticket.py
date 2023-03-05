@@ -14,6 +14,7 @@ class Ticket:
     description: str
     subtasks: list
     status: str
+    creator: str
     assignee: str
     parent: str
     comments: list

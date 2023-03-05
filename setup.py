@@ -1,6 +1,6 @@
 import setuptools
 
-version = "1.0.1"
+version = "1.0.2"
 
 
 def get_requirements_from_file(requirements_file):

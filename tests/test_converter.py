@@ -1,8 +1,7 @@
 from unittest import TestCase
 
-from mock import MagicMock, call
-
 from clickup_to_jira.converter import ClickUpToJIRAConverter
+from mock import MagicMock, call
 
 
 class TestClickUpToJIRAConverter(TestCase):

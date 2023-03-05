@@ -1,12 +1,14 @@
 import json
 from logging import getLogger
 
+from clickup_to_jira.utils import get_item_from_user_input
 from jira import JIRA
 from jira.exceptions import JIRAError
 from jira.resources import User
 import os
 
 from clickup_to_jira.utils import get_item_from_user_input
+
 
 logger = getLogger(__name__)
 
@@ -29,6 +31,15 @@ class JIRAHandler(JIRA):
         :return: The list of created JIRA issues
         :rtype: list(jira.issue)
         """
+        # Read status mappings from file
+        statusmap = os.getenv("STATUSMAP")
+        if statusmap and os.path.exists(statusmap):
+            with open(statusmap) as f:
+                for line in f:
+                    (clickupvalue, x, jiravalue) = line.partition("=")
+                    self.status_mappings[clickupvalue.strip()] = jiravalue.strip()
+                logger.info(f"Read status mappings from file.")
+
         # Create type mappings from tickets
         cur_project = get_item_from_user_input("project", self.projects())
         self.type_mappings = self.create_type_mappings(tickets)
@@ -93,6 +104,11 @@ class JIRAHandler(JIRA):
         :rtype: Jira.issue
         """
         try:
+            # Get creator user id
+            c = self.search_users(user=ticket.creator)
+            # reporter needs to be dict with id
+            reporter = {"id": c[0].accountId} if c and c[0].accountId else None
+            
             # Populate basic data for ticket creation
             issue_data = {
                 "project": project,
@@ -103,6 +119,7 @@ class JIRAHandler(JIRA):
                 else {"name": "Subtask"},
                 "summary": ticket.title,
                 "description": ticket.description,
+                "reporter": reporter,
             }
 
             # Handle case where issue is subtasks
@@ -226,6 +243,15 @@ class JIRAHandler(JIRA):
             click_up_label: default_jira_type
             for click_up_label in click_up_labels
         }
+
+        # Read type mappings from file
+        typemap = os.getenv("TYPEMAP")
+        if typemap and os.path.exists(typemap):
+            with open(typemap) as f:
+                for line in f:
+                    (clickupvalue, x, jiravalue) = line.partition("=")
+                    default_mapping[clickupvalue.strip()] = jiravalue.strip()
+                logger.info(f"Read status mappings from file.")
 
         # Select between custom or standard mappings
         selection = input(

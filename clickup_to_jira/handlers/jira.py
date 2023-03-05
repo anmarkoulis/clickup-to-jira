@@ -7,6 +7,9 @@ from jira.exceptions import JIRAError
 from jira.resources import User
 import os
 
+from clickup_to_jira.utils import get_item_from_user_input
+
+
 logger = getLogger(__name__)
 
 DEFAULT_ISSUE_TYPE = "Story"
@@ -28,6 +31,15 @@ class JIRAHandler(JIRA):
         :return: The list of created JIRA issues
         :rtype: list(jira.issue)
         """
+        # Read status mappings from file
+        statusmap = os.getenv("STATUSMAP")
+        if statusmap and os.path.exists(statusmap):
+            with open(statusmap) as f:
+                for line in f:
+                    (clickupvalue, x, jiravalue) = line.partition("=")
+                    self.status_mappings[clickupvalue.strip()] = jiravalue.strip()
+                logger.info(f"Read status mappings from file.")
+
         # Create type mappings from tickets
         cur_project = get_item_from_user_input("project", self.projects())
         self.type_mappings = self.create_type_mappings(tickets)

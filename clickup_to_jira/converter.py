@@ -68,6 +68,7 @@ class ClickUpToJIRAConverter:
             subtasks=subtasks,
             status=ticket_status,
             assignee=ticket_assignee,
+            creator=ticket.creator,
             comments=ticket.comments,
             parent=ticket.parent,
         )

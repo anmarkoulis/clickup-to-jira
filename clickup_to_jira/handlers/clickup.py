@@ -81,7 +81,11 @@ class ClickUpHandler(ClickUp):
             logger.info(f"Retrieving father for task {task.name}")
             try:
                 task.parent = list(
-                    filter(lambda x: x.id == task.parent, tasks)
+                    filter(
+                        lambda x: x.id
+                        == task.parent,  # pylint: disable=cell-var-from-loop
+                        tasks,
+                    )
                 )[0].name
             except IndexError:
                 logger.info("Issue has no parent")

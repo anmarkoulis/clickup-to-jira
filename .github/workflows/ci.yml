@@ -29,10 +29,8 @@ jobs:
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
-      - name: Install dependencies
-        run: pip install -r requirements.txt -r requirements-tests.txt
       - name: Run precommit
-        run: pre-commit run --all-files
+        run: make pre-commit args=--all-files
 
   unittest:
     runs-on: ubuntu-latest
@@ -44,12 +42,8 @@ jobs:
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
-      - name: Install dependencies
-        run: pip install -r requirements-tests.txt -r requirements.txt
-      - name: Run tests
-        run: coverage run --source=clickup_to_jira/ -m pytest
-      - name: Print report
-        run: coverage report
+      - name: Run tests with coverage
+        run: make test-with-coverage-report
 
   documentation:
     runs-on: ubuntu-latest
@@ -61,12 +55,8 @@ jobs:
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
-      - name: Install library
-        run: pip install .
-      - name: Install sphinx
-        run: pip install -r requirements-docs.txt
       - name: Run sphinx build
-        run: sphinx-build -b html docs/ docs/_build/html -a
+        run: make build-sphinx
       - name: Upload documentation as artifact
         uses: actions/upload-artifact@v2
         with:
@@ -163,10 +153,8 @@ jobs:
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
-      - name: Install dependencies
-        run: pip install wheel
       - name: Build package
-        run: python setup.py sdist bdist_wheel
+        run: make build-package
       - name: Publish package
         uses: pypa/gh-action-pypi-publish@master
         with:

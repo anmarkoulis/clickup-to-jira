@@ -1,4 +1,4 @@
-jira==2.0.0
+jira==3.5.0
 requests==2.25.0
 pyclickup==0.1.4
 python-dotenv==1.0.0

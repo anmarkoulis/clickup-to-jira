@@ -59,7 +59,7 @@ class JIRAHandler(JIRA):
         :return: The new ticket
         :rtype: jira.issue
         """
-        logger.info(f"Creating {ticket.title} in JIRA.")
+        logger.info(f"Creating {ticket.title} in JIRA.(Ticket={ticket.id})")
         # Check issue already exists
         try:
             if self.get_issue_from_summary(project, ticket.title):
@@ -117,7 +117,7 @@ class JIRAHandler(JIRA):
                     "name": self.type_mappings[ticket.type.split(",")[0]]
                 }
                 if not ticket.parent
-                else {"name": "Subtask"},
+                else {"name": "Subtarefa"},
                 "summary": ticket.title,
                 "description": ticket.description,
                 "reporter": reporter,
@@ -131,8 +131,8 @@ class JIRAHandler(JIRA):
 
             # Create the ticket
             return self.create_issue(**issue_data)
-        except JIRAError:
-            logger.exception("Cannot create issue. Move on")
+        except Exception as e:
+            logger.exception("Cannot create issue. Move on", e)
             return None
 
     def assign_issue_to_user(self, issue, ticket):
@@ -143,11 +143,14 @@ class JIRAHandler(JIRA):
         :param Ticket ticket: The Ticket to retrieve the assignee from
         """
         try:
-            user = self.search_users(user=ticket.assignee)[0].accountId
-            self.assign_issue(issue, user)
-            logger.info(f"Assigned {issue}")
-        except (JIRAError, IndexError):
-            logger.warning(f"Cannot assign {issue}")
+            if ticket.assignee:
+                user = self.search_users(user=ticket.assignee)[0].accountId
+                self.assign_issue(issue, user)
+                logger.info(f"Assigned {issue}")
+            else:
+                logger.warning(f"Usuario vazio. Cannot assign {issue}")
+        except Exception as e:
+            logger.warning(f"Cannot assign {issue}", e)
 
     def transition_issue_to_proper_status(self, issue, ticket):
         """
@@ -168,8 +171,8 @@ class JIRAHandler(JIRA):
                 self.status_mappings[ticket.status],
             )
             logger.info(f"Transitioned {issue}")
-        except (JIRAError, IndexError, KeyError, AttributeError):
-            logger.warning("Cannot transition issue")
+        except Exception as e:
+            logger.warning("Cannot transition issue", e)
 
     def update_status_mappings(self, ticket, issue):
         """
@@ -340,8 +343,7 @@ class JIRAHandler(JIRA):
         :rtype: jira.issue
         """
         jql = (
-            f'project = "{project}" and summary '
-            f'~ "{summary}" ORDER BY created DESC'
+            f'project = {project} and summary ~ \'"{summary}"\' ORDER BY created DESC'
         )
         issues = self.search_issues(jql)
         proper_issues = [
@@ -370,14 +372,15 @@ class JIRAHandler(JIRA):
         :param bool includeInactive: If true, then inactive users are included
             in the results.
         """
-        params = {
-            "query": user,
-            "includeActive": includeActive,
-            "includeInactive": includeInactive,
-        }
-        return self._fetch_pages(
-            User, None, "user/search", startAt, maxResults, params
-        )
+        if user:
+            params = {
+                "query": user,
+                "includeActive": includeActive,
+                "includeInactive": includeInactive,
+            }
+            return self._fetch_pages(
+                User, None, "user/search", startAt, maxResults, params
+            )
 
     def assign_issue(self, issue, assignee):
         """
@@ -399,3 +402,12 @@ class JIRAHandler(JIRA):
         payload = {"accountId": assignee}
         self._session.put(url, data=json.dumps(payload))
         return True
+
+    def delete_issue(self, issueKey):
+        url = (
+            self._options["server"]
+            + "/rest/api/latest/issue/"
+            + str(issueKey)
+        )
+
+        self._session.delete(url)

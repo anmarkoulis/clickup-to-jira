@@ -1,3 +1,5 @@
+import os
+import pickle
 from logging import getLogger
 from time import sleep
 
@@ -62,7 +64,15 @@ class ClickUpHandler(ClickUp):
         for task in tasks:
             logger.info(f"Retrieving task {task.name}")
             sleep(SLEEP_PER_REQUEST)
-            task.comments = self.get_task_comments(task)
+            fname = f'C:\\Users\\franc\\OneDrive\\Trabalho\\4BDigital\\JiraMigration\\{task.id}-comments.pkl'
+            if os.path.exists(fname):
+                with open(fname, 'rb') as inp:
+                    task.comments = pickle.load(inp)
+            else:
+                task.comments = self.get_task_comments(task)
+                with open(fname, 'wb') as outp:
+                    pickle.dump(task.comments, outp, pickle.HIGHEST_PROTOCOL)
+
         return tasks
 
     @staticmethod
@@ -74,8 +84,8 @@ class ClickUpHandler(ClickUp):
         :return: The updated tasks
         :rtype: list(Task)
         """
-        for task in tasks:
-            task.parent = None
+        # for task in tasks:
+        #     task.parent = None
 
         for task in tasks:
             logger.info(f"Retrieving father for task {task.name}")

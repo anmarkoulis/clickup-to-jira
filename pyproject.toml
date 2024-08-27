@@ -29,7 +29,7 @@ python-dotenv = "1.0.0"
 mistletoe = "0.7.2"
 
 [tool.poetry.group.dev.dependencies]
-pre-commit = "3.3.3"
+pre-commit = "3.5.0"
 pylint = "2.17.4"
 coverage = "7.2.7"
 freezegun="1.2.2"

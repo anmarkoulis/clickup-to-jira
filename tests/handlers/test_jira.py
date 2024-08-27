@@ -527,7 +527,8 @@ class TestJIRAHandler(TestCase):
             0,
             50,
             {
-                "query": user,
+                "username": user,
+                "query": None,
                 "includeActive": True,
                 "includeInactive": False,
             },

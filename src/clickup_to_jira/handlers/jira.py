@@ -4,7 +4,6 @@ from logging import getLogger
 
 from jira import JIRA
 from jira.exceptions import JIRAError
-from jira.resources import User
 
 from clickup_to_jira.utils import get_item_from_user_input
 
@@ -349,36 +348,6 @@ class JIRAHandler(JIRA):
             issue for issue in issues if issue.fields.summary == summary
         ]
         return proper_issues
-
-    def search_users(
-        self,
-        user,
-        startAt=0,
-        maxResults=50,
-        includeActive=True,
-        includeInactive=False,
-    ):
-        """
-        Get a list of user Resources that match the specified search string.
-
-        :param str user: a string to match usernames, name or email against.
-        :param int startAt: index of the first user to return.
-        :param int maxResults: maximum number of users to return. If
-            maxResults evaluates as False, it will try to get all items
-            in batches.
-        :param bool includeActive: If true, then active users are included in
-            the results.
-        :param bool includeInactive: If true, then inactive users are included
-            in the results.
-        """
-        params = {
-            "query": user,
-            "includeActive": includeActive,
-            "includeInactive": includeInactive,
-        }
-        return self._fetch_pages(
-            User, None, "user/search", startAt, maxResults, params
-        )
 
     def assign_issue(self, issue, assignee):
         """

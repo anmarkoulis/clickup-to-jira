@@ -26,7 +26,7 @@ jira = "2.0.0"
 requests = "2.32.3"
 pyclickup = "0.1.4"
 python-dotenv = "1.0.0"
-mistletoe = "0.7.2"
+mistletoe = "1.4.0"
 
 [tool.poetry.group.dev.dependencies]
 pre-commit = "3.5.0"

@@ -876,13 +876,13 @@ reference = "default_pypi"
 
 [[package]]
 name = "mistletoe"
-version = "0.7.2"
+version = "1.4.0"
 description = "A fast, extensible Markdown parser in pure Python."
 optional = false
-python-versions = "~=3.3"
+python-versions = "~=3.5"
 files = [
-    {file = "mistletoe-0.7.2-py3-none-any.whl", hash = "sha256:3e2d31b2fa6231ea2ee46981274ebac8d5e5736e3aad2d1cd449e2c053b7023b"},
-    {file = "mistletoe-0.7.2.tar.gz", hash = "sha256:24d0f18cc5f0381c2cfb8a24ef3de83eb9f7929cb7d0e71ecb164b671d86e6a3"},
+    {file = "mistletoe-1.4.0-py3-none-any.whl", hash = "sha256:44a477803861de1237ba22e375c6b617690a31d2902b47279d1f8f7ed498a794"},
+    {file = "mistletoe-1.4.0.tar.gz", hash = "sha256:1630f906e5e4bbe66fdeb4d29d277e2ea515d642bb18a9b49b136361a9818c9d"},
 ]
 
 [package.source]
@@ -1789,4 +1789,4 @@ reference = "default_pypi"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.0,<4.0.0"
-content-hash = "501ddb75d3dcc6a3e7a4f7eb387f18ca6d990f0c146e3f206f1135fbf6caee2f"
+content-hash = "8aa0bf9e9b37e7cc4620e52df8cf5397c9ffc8b69ba1d8d23b84c29572ffa59b"

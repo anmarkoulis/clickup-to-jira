@@ -313,7 +313,7 @@ valid-metaclass-classmethod-first-arg = "mcs"
 exclude-protected = ["_asdict", "_fields", "_replace", "_source", "_make"]
 
 [tool.pylint.exceptions]
-overgeneral-exceptions = "Exception"
+overgeneral-exceptions = "builtins.Exception"
 
 [tool.ruff]
 # Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.

@@ -22,7 +22,7 @@ priority = "primary"
 
 [tool.poetry.dependencies]
 python = ">=3.8.0,<4.0.0"
-jira = "2.0.0"
+jira = "3.8.0"
 requests = "2.32.3"
 pyclickup = "0.1.4"
 python-dotenv = "1.0.0"

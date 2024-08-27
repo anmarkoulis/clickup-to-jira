@@ -1,3 +1,9 @@
+## v1.1.2 (2024-08-27)
+
+### Fix
+
+- upload properly documentation on read the docs
+
 ## v1.1.1 (2024-08-27)
 
 ### Fix

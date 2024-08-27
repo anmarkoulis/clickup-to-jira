@@ -1,0 +1,35 @@
+on:
+  workflow_call:
+    inputs:
+      upload_docs:
+        description: Upload documentation to read the docs
+        required: false
+        default: false
+        type: boolean
+    secrets:
+      RTDS_WEBHOOK_TOKEN:
+        required: false
+      RTDS_WEBHOOK_URL:
+        required: false
+
+jobs:
+  documentation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup Python
+        uses: actions/setup-python@v4.5.0
+        with:
+          python-version: 3.8
+          architecture: x64
+      - name: Checkout Repository
+        uses: actions/checkout@main
+      - name: Run sphinx build
+        run: make build-sphinx
+      - name: Upload documentation as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: documentation
+          path: docs/_build/html
+      - name: Upload to read the docs
+        if: ${{ github.event.inputs.upload_docs }}
+        run: curl -X POST -d "branches=master" -d "token=${{ secrets.RTDS_WEBHOOK_TOKEN }}"  ${{ secrets.RTDS_WEBHOOK_URL }}

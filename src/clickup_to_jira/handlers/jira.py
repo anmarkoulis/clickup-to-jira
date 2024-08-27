@@ -2,10 +2,11 @@ import json
 import os
 from logging import getLogger
 
-from clickup_to_jira.utils import get_item_from_user_input
 from jira import JIRA
 from jira.exceptions import JIRAError
 from jira.resources import User
+
+from clickup_to_jira.utils import get_item_from_user_input
 
 logger = getLogger(__name__)
 
@@ -34,9 +35,9 @@ class JIRAHandler(JIRA):
             with open(statusmap) as f:
                 for line in f:
                     (clickupvalue, _, jiravalue) = line.partition("=")
-                    self.status_mappings[
-                        clickupvalue.strip()
-                    ] = jiravalue.strip()
+                    self.status_mappings[clickupvalue.strip()] = (
+                        jiravalue.strip()
+                    )
                 logger.info("Read status mappings from file.")
 
         # Create type mappings from tickets
@@ -45,7 +46,7 @@ class JIRAHandler(JIRA):
         logger.info(self.type_mappings)
 
         # Create all tickets
-        issues = list()
+        issues = []
         for ticket in tickets:
             issues.append(self.create_jira_issue(ticket, cur_project.id))
         return issues
@@ -113,11 +114,11 @@ class JIRAHandler(JIRA):
             # Populate basic data for ticket creation
             issue_data = {
                 "project": project,
-                "issuetype": {
-                    "name": self.type_mappings[ticket.type.split(",")[0]]
-                }
-                if not ticket.parent
-                else {"name": "Subtask"},
+                "issuetype": (
+                    {"name": self.type_mappings[ticket.type.split(",")[0]]}
+                    if not ticket.parent
+                    else {"name": "Subtask"}
+                ),
                 "summary": ticket.title,
                 "description": ticket.description,
                 "reporter": reporter,

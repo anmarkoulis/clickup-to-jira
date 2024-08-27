@@ -29,7 +29,7 @@ class ClickUpToJIRAConverter:
         :return: The converted tickets
         :rtype: list(Ticket)
         """
-        converted_tickets = list()
+        converted_tickets = []
         for ticket in tickets:
             converted_tickets.append(self.convert_ticket(ticket))
         return converted_tickets

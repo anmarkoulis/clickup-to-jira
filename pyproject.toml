@@ -31,7 +31,7 @@ mistletoe = "1.4.0"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "3.5.0"
 pylint = "3.2.6"
-coverage = "7.2.7"
+coverage = "7.6.1"
 freezegun="1.2.2"
 sphinx="6.2.1"
 sphinx_rtd_theme="1.2.2"

@@ -31,5 +31,5 @@ jobs:
           name: documentation
           path: docs/_build/html
       - name: Upload to read the docs
-        if: ${{ github.event.inputs.upload_docs }}
+        if: ${{ inputs.upload_docs == 'true' || inputs.upload_docs == true }}
         run: curl -X POST -d "branches=master" -d "token=${{ secrets.RTDS_WEBHOOK_TOKEN }}"  ${{ secrets.RTDS_WEBHOOK_URL }}

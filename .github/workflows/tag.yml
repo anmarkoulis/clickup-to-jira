@@ -19,3 +19,6 @@ jobs:
     uses: ./.github/workflows/docs.yml
     with:
       upload_docs: true
+    secrets:
+      RTDS_WEBHOOK_TOKEN: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+      RTDS_WEBHOOK_URL: ${{ secrets.RTDS_WEBHOOK_URL }}

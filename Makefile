@@ -40,5 +40,8 @@ build-sphinx: install-as-library
 build-package: install-as-library
 	poetry build
 
+publish-package: install-as-library
+	poetry publish --build
+
 migrate_to_jira: install-as-library
 	poetry run migrate_to_jira

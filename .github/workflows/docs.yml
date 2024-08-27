@@ -17,16 +17,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Setup Python
-        uses: actions/setup-python@v4.5.0
+        uses: actions/setup-python@v5
         with:
-          python-version: 3.8
+          python-version: "3.11"
           architecture: x64
       - name: Checkout Repository
         uses: actions/checkout@main
       - name: Run sphinx build
         run: make build-sphinx
       - name: Upload documentation as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: docs/_build/html

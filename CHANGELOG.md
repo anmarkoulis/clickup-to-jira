@@ -1,3 +1,10 @@
+## v1.1.1 (2024-08-27)
+
+### Fix
+
+- use main as release branch
+- search user using parent class and not buggy derived method
+
 ## v1.1.0 (2023-03-05)
 
 ### Feat

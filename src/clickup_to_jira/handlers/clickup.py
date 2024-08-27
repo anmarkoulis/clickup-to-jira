@@ -1,9 +1,10 @@
 from logging import getLogger
 from time import sleep
 
+from pyclickup import ClickUp
+
 from clickup_to_jira.comment import Comment
 from clickup_to_jira.utils import get_item_from_user_input
-from pyclickup import ClickUp
 
 logger = getLogger(__name__)
 
@@ -131,7 +132,7 @@ class ClickUpHandler(ClickUp):
         :return: The ordered tasks list
         :rtype: list(Task)
         """
-        sorted_tasks = list()
+        sorted_tasks = []
         for task in tasks:
             if task.parent:
                 sorted_tasks.append(task)

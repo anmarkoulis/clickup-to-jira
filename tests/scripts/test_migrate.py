@@ -1,8 +1,8 @@
 import os
 from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
 from clickup_to_jira.scripts.migrate import main
-from mock import MagicMock, patch
 
 
 class TestMigrate(TestCase):

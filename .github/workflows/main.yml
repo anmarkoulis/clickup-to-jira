@@ -1,0 +1,32 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - "main"
+
+concurrency:
+  group: main
+  cancel-in-progress: true
+
+jobs:
+  precommit:
+    uses: ./.github/workflows/precommit.yml
+
+  unittest:
+    uses: ./.github/workflows/test.yml
+
+  documentation:
+    uses: ./.github/workflows/docs.yml
+    with:
+      upload_docs: false
+
+  bump:
+    if: "!startsWith(github.event.head_commit.message, 'bump:')"
+    needs:
+      - unittest
+      - precommit
+      - documentation
+    uses: ./.github/workflows/bump.yml
+    secrets:
+      PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}

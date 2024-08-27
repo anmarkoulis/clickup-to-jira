@@ -17,9 +17,6 @@ formats:
 python:
   version: 3.8
   install:
-    - method: setuptools
-      path: .
-    - requirements: requirements-docs.txt
-
-
+    - method: poetry
+      dev-deps: true
   system_packages: true

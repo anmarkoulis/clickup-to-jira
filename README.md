@@ -10,10 +10,10 @@ This project is a small utility that helps migrating tasks from ClickUp to JIRA.
 
 ## Installation
 
-In order to use the package please install it by running the following command in the directory where the `setup.py` is found:
+In order to use the package please install it by running the following command in the directory where the `pyproject.toml` is found:
 
 ```bash
-pip install .
+make install
 ```
 
 ## Execution
@@ -21,7 +21,7 @@ pip install .
 After installing the library run the following command.
 
 ```bash
-migrate_to_jira
+make migrate_to_jira
 ```
 
 Keep in mind that the following environmental variables need to have a proper value.

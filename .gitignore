@@ -328,7 +328,7 @@ tags
 .vscode
 
 ### Node modules used on bump method of precommit
+node_modules/*
 
- node_modules/*
-
-
+# Flakeheaven
+.flakeheaven_cache

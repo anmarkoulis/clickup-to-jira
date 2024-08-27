@@ -1,8 +1,8 @@
 from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
 from clickup_to_jira.comment import Comment
 from clickup_to_jira.handlers import ClickUpHandler
-from mock import MagicMock, patch
 
 
 class TestClickUpHandler(TestCase):

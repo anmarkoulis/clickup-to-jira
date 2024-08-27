@@ -1,0 +1,366 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "clickup_to_jira"
+version = "1.1.0"
+description = "This project is a small utility that helps migrating tasks from ClickUp to JIRA."
+authors = ["Antonis Markoulis <amarkoulis@hotmail.com>"]
+readme = "README.md"
+keywords = ["clickup_to_jira"]
+packages = [
+    { include = "clickup_to_jira", from="src" },
+]
+license = "MIT"
+include = ["**/*.md", "**/*.txt"]
+
+[[tool.poetry.source]]
+name = "default_pypi"
+url = "https://pypi.python.org/simple"
+priority = "primary"
+
+[tool.poetry.dependencies]
+python = ">=3.8.0,<4.0.0"
+jira = "2.0.0"
+requests = "2.32.3"
+pyclickup = "0.1.4"
+python-dotenv = "1.0.0"
+mistletoe = "0.7.2"
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "3.3.3"
+pylint = "2.17.4"
+coverage = "7.2.7"
+freezegun="1.2.2"
+sphinx="6.2.1"
+sphinx_rtd_theme="1.2.2"
+m2r="0.3.1"
+mistune="0.8.4"
+jinja2="3.0.3"
+wheel="0.38.4"
+pytest-cov="4.0.0"
+pytest="7.2.2"
+detect-secrets="1.5.0"
+
+[tool.poetry.scripts]
+migrate_to_jira = "clickup_to_jira.scripts.migrate:main"
+
+[tool.mypy]
+exclude = ".*/migrations/"
+disallow_incomplete_defs = true
+check_untyped_defs = true
+ignore_missing_imports = true
+warn_unused_ignores = true
+warn_redundant_casts = true
+warn_unused_configs = true
+disable_error_code = "misc"
+show_error_codes = true
+namespace_packages = true
+strict_optional = false
+disallow_untyped_defs = true
+
+[tool.isort]
+line_length = 79
+multi_line_output = 3
+include_trailing_comma = 'True'
+known_first_party='lumi'
+force_grid_wrap=0
+combine_as_imports='True'
+
+[tool.black]
+line-length = 79
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | _build
+  | buck-out
+  | build
+  | dist
+)/
+'''
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "1.1.0"
+tag_format = "v$version"
+version_files = [
+    "setup.py:version",
+    ".cz.toml:version",
+    "docs/conf.py:version",
+]
+update_changelog_on_bump = true
+
+[tool.flakeheaven.plugins]
+pyflakes = ["+*"]
+pycodestyle = ["+*", "-E203", "-E266", "-E501", "-W503"]
+
+[tool.flakeheaven.exceptions."**/__init__.py"]
+pyflakes = ["-F401"] # Unused imports in __init__.py
+
+[tool.pycodestyle]
+max-line-length = 79
+exclude = [".tox", ".git", "*/migrations/*", "*/static/CACHE/*", "docs", "node_modules"]
+
+[tool.pylint.master]
+ignore = ["migrations", "settings", "manage.py"]
+persistent = "no"
+jobs = 1
+unsafe-load-any-extension = "no"
+extension-pkg-whitelist = []
+optimize-ast = "no"
+
+[tool.pylint.messages_control]
+confidence = []
+disable = "all"
+enable = ["import-error",
+    "relative-import",
+    "reimported",
+    "deprecated-module",
+    "unpacking-non-sequence",
+    "used-before-assignment",
+    "global-variable-undefined",
+    "redefine-in-handler",
+    "undefined-loop-variable",
+    "global-at-module-level",
+    "bad-open-mode",
+    "redundant-unittest-assert",
+    "boolean-datetime",
+    "deprecated-method",
+    "anomalous-unicode-escape-in-string",
+    "abstract-class-instantiated",
+    "star-needs-assignment-target",
+    "duplicate-argument-name",
+    "nonlocal-and-global",
+    "return-arg-in-generator",
+    "invalid-star-assignment-target",
+    "bad-reversed-sequence",
+    "init-is-generator",
+    "confusing-with-statement",
+    "unnecessary-lambda",
+    "pointless-string-statement",
+    "unnecessary-pass",
+    "unreachable",
+    "using-constant-test",
+    "bad-super-call",
+    "missing-super-argument",
+    "slots-on-old-class",
+    "super-on-old-class",
+    "property-on-old-class",
+    "not-an-iterable",
+    "not-a-mapping",
+    "bad-format-character",
+    "bad-format-string-key",
+    "bad-format-string",
+    "missing-format-attribute",
+    "invalid-format-index",
+    "mixed-indentation",
+    "lowercase-l-suffix",
+    "invalid-encoded-data",
+    "unpacking-in-except",
+    "import-star-module-level",
+    "long-suffix",
+    "old-octal-literal",
+    "old-ne-operator",
+    "backtick",
+    "old-raise-syntax",
+    "dict-iter-method",
+    "dict-view-method",
+    "raising-string",
+    "using-cmp-argument",
+    "cmp-method",
+    "coerce-method",
+    "delslice-method",
+    "getslice-method",
+    "hex-method",
+    "nonzero-method",
+    "t-method",
+    "setslice-method",
+    "logging-format-truncated",
+    "logging-unsupported-format",
+    "logging-format-interpolation",
+    "invalid-unary-operand-type",
+    "unsupported-binary-operation",
+    "not-callable",
+    "redundant-keyword-arg",
+    "assignment-from-no-return",
+    "assignment-from-none",
+    "not-context-manager",
+    "repeated-keyword",
+    "missing-kwoa",
+    "no-value-for-parameter",
+    "invalid-sequence-index",
+    "invalid-slice-index",
+    "unexpected-keyword-arg",
+    "unsupported-membership-test",
+    "unsubscriptable-object",
+    "access-member-before-definition",
+    "method-hidden",
+    "assigning-non-slot",
+    "no-method-argument",
+    "no-self-argument",
+    "unexpected-special-method-signature",
+    "non-iterator-returned",
+    "arguments-differ",
+    "bad-staticmethod-argument",
+    "non-parent-init-called",
+    "bad-except-order",
+    "catching-non-exception",
+    "bad-exception-context",
+    "raising-bad-type",
+    "raising-non-exception",
+    "misplaced-bare-raise",
+    "broad-except",
+    "nonstandard-exception",
+    "not-async-context-manager",
+]
+
+[tool.pylint.reports]
+output-format = "colorized"
+files-output = "no"
+reports = "no"
+msg-template = '[{msg_id} {symbol}] {msg} File: {path}, line {line}, in {obj}'
+
+[tool.pylint.logging]
+logging-modules = "logging"
+
+[tool.pylint.format]
+max-line-length = 79
+ignore-long-lines='^\s*(# )?<?https?://\S+>?$'
+single-line-if-stmt = "no"
+no-space-check = ["trailing-comma", "dict-separator"]
+max-module-lines = 1000
+indent-string = '    '
+indent-after-paren = 4
+expected-line-ending-format = "LF"
+
+[tool.pylint.typecheck]
+ignore-mixin-members = "yes"
+ignored-classes = "DictField"
+
+[tool.pylint.variables]
+init-import = "no"
+dummy-variables-rgx = "_$|dummy"
+callbacks = ["cb_", "_cb"]
+
+[tool.pylint.similarities]
+min-similarity-lines = 4
+ignore-comments = "yes"
+ignore-docstrings = "yes"
+ignore-imports = "no"
+
+[tool.pylint.spelling]
+spelling-store-unknown-words = "no"
+
+[tool.pylint.miscellaneous]
+notes = ["FIXME", "XXX", "TODO"]
+
+[tool.pylint.basic]
+good-names = ["i", "j", "k", "ex", "Run", "_"]
+bad-names = ["foo", "bar", "baz", "toto", "tutu", "tata"]
+include-naming-hint = "no"
+function-rgx = "[a-z_][a-z0-9_]{2,30}$"
+function-name-hint = "[a-z_][a-z0-9_]{2,30}$"
+variable-rgx = "[a-z_][a-z0-9_]{2,30}$"
+variable-name-hint = "[a-z_][a-z0-9_]{2,30}$"
+const-rgx = "(([A-Z_][A-Z0-9_]*)|(__.*__))$"
+const-name-hint = "(([A-Z_][A-Z0-9_]*)|(__.*__))$"
+attr-rgx = "[a-z_][a-z0-9_]{2,30}$"
+attr-name-hint = "[a-z_][a-z0-9_]{2,30}$"
+argument-rgx = "[a-z_][a-z0-9_]{2,30}$"
+argument-name-hint = "[a-z_][a-z0-9_]{2,30}$"
+class-attribute-rgx = "([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$"
+class-attribute-name-hint = "([A-Za-z_][A-Za-z0-9_]{2,30}|(__.*__))$"
+inlinevar-rgx = "[A-Za-z_][A-Za-z0-9_]*$"
+inlinevar-name-hint = "[A-Za-z_][A-Za-z0-9_]*$"
+class-rgx = "[A-Z_][a-zA-Z0-9]+$"
+class-name-hint = "[A-Z_][a-zA-Z0-9]+$"
+module-rgx = "(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$"
+module-name-hint = "(([a-z_][a-z0-9_]*)|([A-Z][a-zA-Z0-9]+))$"
+method-rgx = "[a-z_][a-z0-9_]{2,30}$"
+method-name-hint = "[a-z_][a-z0-9_]{2,30}$"
+no-docstring-rgx = "^_"
+docstring-min-length = -1
+
+[tool.pylint.elif]
+max-nested-blocks = 5
+
+[tool.pylint.imports]
+deprecated-modules = ["regsub", "TERMIOS", "Bastion", "rexec"]
+
+[tool.pylint.design]
+max-args = 5
+ignored-argument-names = "_.*"
+max-locals = 15
+max-returns = 6
+max-branches = 12
+max-statements = 50
+max-parents = 7
+max-attributes = 7
+min-public-methods = 2
+max-public-methods = 20
+max-bool-expr = 5
+
+[tool.pylint.classes]
+defining-attr-methods = ["__init__", "__new__", "setUp"]
+valid-classmethod-first-arg = "cls"
+valid-metaclass-classmethod-first-arg = "mcs"
+exclude-protected = ["_asdict", "_fields", "_replace", "_source", "_make"]
+
+[tool.pylint.exceptions]
+overgeneral-exceptions = "Exception"
+
+[tool.ruff]
+# Enable pycodestyle (`E`) and Pyflakes (`F`) codes by default.
+lint.select = ["A001", "PLW0406", "F404", "PLE0604", "F822", "B023", "PLW0602", "PLW0603", "W605", "F701", "F702", "PLE0116", "PLE0101", "F622", "F706", "B002", "F704", "PLE0117", "B012", "F631", "B006", "F601", "PLW0120", "B018", "S307", "S102", "B018", "F502", "F501", "F524", "F506", "F524", "PLE1310", "F522", "F525", "F524", "E703", "PLE1206", "PLE1205", "F901", "B014", "PLW0711", "E722", "PLE1700"]
+lint.ignore = []
+
+# Allow autofix for all enabled rules (when `--fix`) is provided.
+lint.fixable = ["A", "B", "C", "D", "E", "F", "G", "I", "N", "Q", "S", "T", "W", "ANN", "ARG", "BLE", "COM", "DJ", "DTZ", "EM", "ERA", "EXE", "FBT", "ICN", "INP", "ISC", "NPY", "PD", "PGH", "PIE", "PL", "PT", "PTH", "PYI", "RET", "RSE", "RUF", "SIM", "SLF", "TCH", "TID", "TRY", "UP", "YTT"]
+lint.unfixable = []
+
+# Exclude a variety of commonly ignored directories.
+lint.exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+]
+
+# Same as Black.
+line-length = 79
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Assume Python 3.10.
+target-version = "py310"
+
+[tool.ruff.lint.mccabe]
+# Unlike Flake8, default to a complexity level of 10.
+max-complexity = 10
+
+[tool.bandit]
+exclude_dirs = [".venv", "venv"]

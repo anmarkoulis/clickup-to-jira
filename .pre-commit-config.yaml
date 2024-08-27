@@ -1,25 +1,30 @@
 default_stages:
   - commit
-exclude: docs|.git|.tox
-fail_fast: true
+exclude: node_modules|.git/|.tox
 repos:
   - hooks:
-      - id: commitizen
-        stages: [ commit-msg ]
-    repo: https://github.com/commitizen-tools/commitizen
-    rev: v2.42.1
+      - id:
+          actionlint
+    repo: https://github.com/rhysd/actionlint
+    rev: v1.7.1
 
   - hooks:
       - id: detect-secrets
-        args: [ '--baseline', '.pre-commit/.secrets.baseline' ]
-        exclude: (docs|README.md)
+        args: [ '--baseline', '.secrets.baseline' ]
+        exclude: (config/settings/test.py|/static|.html|local|README.md|poetry.lock|infra/environments/.*_cf_parameters.json*)
     repo: https://github.com/Yelp/detect-secrets.git
-    rev: v1.4.0
+    rev: v1.5.0
 
   - hooks:
       - id: check-merge-conflict
       - id: trailing-whitespace
       - id: end-of-file-fixer
+      - id: debug-statements
+      - id: check-added-large-files
+      - id: check-docstring-first
+      - id: check-case-conflict
+      - id: check-builtin-literals
+      - id: mixed-line-ending
       - id: check-json
         files: \.(json)$
       - id: check-toml
@@ -29,43 +34,58 @@ repos:
       - id: fix-encoding-pragma
         args: [ --remove ]
     repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.6.0
 
   - hooks:
       - id: isort
-        entry: isort --settings-path=.pre-commit
+        entry: isort
+        additional_dependencies: [ "toml" ]
     repo: https://github.com/pre-commit/mirrors-isort
     rev: v5.10.1
 
   - hooks:
       - exclude: (/settings/)
         id: black
-        args:
-          - --config=.pre-commit/pyproject.toml
-        language_version: python3.8
         require_serial: true
         types:
           - python
     repo: https://github.com/ambv/black
-    rev: 23.1.0
+    rev: 24.8.0
 
   - hooks:
-      - args:
-          - --config=.pre-commit/setup.cfg
-        id: flake8
-    repo: https://github.com/pycqa/flake8
-    rev: 6.0.0
+      - id: flakeheaven
+    repo: https://github.com/flakeheaven/flakeheaven
+    rev: 3.3.0
 
   - hooks:
-      - entry: pylint --rcfile=.pre-commit/.pylintrc
+      - entry: pylint --jobs=0
+        exclude: (/settings/)
         files: \.py$
-        id: system
+        id: PyLint
         language: system
         name: PyLint
     repo: local
 
   - hooks:
+      - id: ruff
+    repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.2
+
+  - hooks:
+      - id: commitizen
+        stages:
+          - commit-msg
+    repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.29.0
+
+  - hooks:
       - id: bandit
-        args: [ --verbose, -ll, --recursive, . ]
+        args: [ -c, pyproject.toml, --verbose, -ll, --recursive, . ]
+        additional_dependencies: [ "bandit[toml]" ]
     repo: https://github.com/PyCQA/bandit
-    rev: 1.7.4
+    rev: 1.7.9
+
+  - repo: https://github.com/Trim21/poetry-check-lock.git
+    rev: v0.0.5
+    hooks:
+      - id: poetry-check-lock

@@ -1,11 +1,12 @@
 import json
 import os
 from unittest import TestCase
+from unittest.mock import MagicMock, call, patch
 
-from clickup_to_jira.handlers.jira import JIRAHandler
 from jira.exceptions import JIRAError
 from jira.resources import User
-from mock import MagicMock, call, patch
+
+from clickup_to_jira.handlers.jira import JIRAHandler
 
 
 class TestJIRAHandler(TestCase):

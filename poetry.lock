@@ -1643,17 +1643,17 @@ reference = "default_pypi"
 
 [[package]]
 name = "wheel"
-version = "0.38.4"
+version = "0.44.0"
 description = "A built-package format for Python"
 optional = false
-python-versions = ">=3.7"
+python-versions = ">=3.8"
 files = [
-    {file = "wheel-0.38.4-py3-none-any.whl", hash = "sha256:b60533f3f5d530e971d6737ca6d58681ee434818fab630c83a734bb10c083ce8"},
-    {file = "wheel-0.38.4.tar.gz", hash = "sha256:965f5259b566725405b05e7cf774052044b1ed30119b5d586b2703aafe8719ac"},
+    {file = "wheel-0.44.0-py3-none-any.whl", hash = "sha256:2376a90c98cc337d18623527a97c31797bd02bad0033d41547043a1cbfbe448f"},
+    {file = "wheel-0.44.0.tar.gz", hash = "sha256:a29c3f2817e95ab89aa4660681ad547c0e9547f20e75b0562fe7723c9a2a9d49"},
 ]
 
 [package.extras]
-test = ["pytest (>=3.0.0)"]
+test = ["pytest (>=6.0.0)", "setuptools (>=65)"]
 
 [package.source]
 type = "legacy"
@@ -1687,4 +1687,4 @@ reference = "default_pypi"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8.0,<4.0.0"
-content-hash = "5eaf2ea72147dad480d3af90375a0a3fc54a4d5e26f80279112f63cabf368d67"
+content-hash = "34fa39e1f44e1908c3acaa38758978bdfa100f4f7548a00cd3b4e777ec2ea680"

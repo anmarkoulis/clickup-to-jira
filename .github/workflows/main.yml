@@ -19,7 +19,10 @@ jobs:
   documentation:
     uses: ./.github/workflows/docs.yml
     with:
-      upload_docs: false
+      upload_docs: true
+    secrets:
+      RTDS_WEBHOOK_TOKEN: ${{ secrets.RTDS_WEBHOOK_TOKEN }}
+      RTDS_WEBHOOK_URL: ${{ secrets.RTDS_WEBHOOK_URL }}
 
   bump:
     if: "!startsWith(github.event.head_commit.message, 'bump:')"
